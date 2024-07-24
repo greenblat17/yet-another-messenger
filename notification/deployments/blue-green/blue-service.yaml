@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: blue-service-notification
+  namespace: notification
+spec:
+  selector:
+    app: notification
+    version: blue
+  ports:
+  - protocol: TCP
+    port: 83
+    targetPort: 8083

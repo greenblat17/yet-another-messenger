@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: canary-deployment-user
+  namespace: user
+  labels:
+    app: user
+    version: canary
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: user
+      version: canary
+  template:
+    metadata:
+      labels:
+        app: user
+        version: canary
+    spec:
+      containers:
+      - name: user-service
+        image: docker.io/library/msa-user-service:latest
+        imagePullPolicy: "Never" # for local in minikube
+        ports:
+        - containerPort: 8084
+        startupProbe:
+          httpGet:
+            path: /start-up
+            port: 8084
+          failureThreshold: 30
+          periodSeconds: 10
+        livenessProbe:
+          tcpSocket:
+            port: 8084
+          initialDelaySeconds: 15
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: 8084
+          initialDelaySeconds: 15
+          periodSeconds: 10

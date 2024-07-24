@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: blue-deployment-friendship
+  namespace: friendship
+  labels:
+    app: friendship
+    version: blue
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: friendship
+      version: blue
+  template:
+    metadata:
+      labels:
+        app: friendship
+        version: blue
+    spec:
+      containers:
+      - name: friendship-service
+        image: docker.io/library/msa-friendship-service:latest
+        imagePullPolicy: "Never" # for local in minikube
+        ports:
+        - containerPort: 8082
+        startupProbe:
+          httpGet:
+            path: /start-up
+            port: 8082
+          failureThreshold: 30
+          periodSeconds: 10
+        livenessProbe:
+          tcpSocket:
+            port: 8082
+          initialDelaySeconds: 15
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: 8082
+          initialDelaySeconds: 15
+          periodSeconds: 10
