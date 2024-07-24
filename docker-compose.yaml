@@ -1,9 +1,11 @@
 version: '3.3'
 
+
 services:
   auth-service:
     build:
       context: ./auth
+      dockerfile: build/Dockerfile
     ports:
       - "8080:8080"
     environment:
@@ -12,6 +14,7 @@ services:
   user-service:
     build:
       context: ./user
+      dockerfile: build/Dockerfile
     ports:
       - "8081:8081"
     environment:
@@ -20,6 +23,7 @@ services:
   friendship-service:
     build:
       context: ./friendship
+      dockerfile: build/Dockerfile
     ports:
       - "8082:8082"
     environment:
@@ -28,6 +32,7 @@ services:
   chat-service:
     build:
       context: ./chat
+      dockerfile: build/Dockerfile
     ports:
       - "8083:8083"
     environment:
@@ -36,6 +41,7 @@ services:
   notification-service:
     build:
       context: ./notification
+      dockerfile: build/Dockerfile
     ports:
       - "8084:8084"
     environment:
