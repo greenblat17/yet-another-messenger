@@ -25,6 +25,11 @@ func main() {
 		fmt.Fprintln(w, "Auth Service is ready")
 	})
 
+	http.HandleFunc("/start-up", func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		fmt.Fprintln(w, "Auth Service is start up")
+	})
+
 	port, ok := os.LookupEnv("AUTH_PORT")
 	if !ok {
 		port = "8080"

@@ -25,6 +25,11 @@ func main() {
 		fmt.Fprintln(w, "Friendship Service is ready")
 	})
 
+	http.HandleFunc("/start-up", func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		fmt.Fprintln(w, "Friendship Service is start up")
+	})
+
 	port, ok := os.LookupEnv("FRIENDSHIP_PORT")
 	if !ok {
 		port = "8082"

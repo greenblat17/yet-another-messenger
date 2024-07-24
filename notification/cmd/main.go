@@ -25,6 +25,11 @@ func main() {
 		fmt.Fprintln(w, "Notification Service is ready")
 	})
 
+	http.HandleFunc("/start-up", func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		fmt.Fprintln(w, "Notification Service is start up")
+	})
+
 	port, ok := os.LookupEnv("NOTIFICATION_PORT")
 	if !ok {
 		port = "8084"

@@ -25,6 +25,11 @@ func main() {
 		fmt.Fprintln(w, "User Service is ready")
 	})
 
+	http.HandleFunc("/start-up", func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		fmt.Fprintln(w, "User Service is start up")
+	})
+
 	port, ok := os.LookupEnv("USER_PORT")
 	if !ok {
 		port = "8081"
