@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: green-deployment-chat
+  namespace: chat
+  labels:
+    app: chat
+    version: green
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: chat
+      version: green
+  template:
+    metadata:
+      labels:
+        app: chat
+        version: green
+    spec:
+      containers:
+      - name: chat-service
+        image: docker.io/library/msa-chat-service:latest
+        imagePullPolicy: "Never" # for local in minikube
+        ports:
+        - containerPort: 8081
+        startupProbe:
+          httpGet:
+            path: /start-up
+            port: 8081
+          failureThreshold: 30
+          periodSeconds: 10
+        livenessProbe:
+          tcpSocket:
+            port: 8081
+          initialDelaySeconds: 15
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: 8081
+          initialDelaySeconds: 15
+          periodSeconds: 10

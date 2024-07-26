@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: main-deployment-auth
+  namespace: auth
+  labels:
+    app: auth
+    version: main
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: auth
+      version: main
+  template:
+    metadata:
+      labels:
+        app: auth
+        version: main
+    spec:
+      containers:
+      - name: auth-service
+        image: docker.io/library/msa-auth-service:latest
+        imagePullPolicy: "Never" # for local in minikube
+        ports:
+        - containerPort: 8080
+        startupProbe:
+          httpGet:
+            path: /start-up
+            port: 8080
+          failureThreshold: 30
+          periodSeconds: 10
+        livenessProbe:
+          tcpSocket:
+            port: 8080
+          initialDelaySeconds: 15
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: 8080
+          initialDelaySeconds: 15
+          periodSeconds: 10
