@@ -100,7 +100,6 @@ generate-chat: .bin-deps .vendor-proto
 .PHONY: generate-all
 generate-all: generate-auth generate-user generate-friendship generate-chat
 
-
 .PHONY: build up down
 
 build:

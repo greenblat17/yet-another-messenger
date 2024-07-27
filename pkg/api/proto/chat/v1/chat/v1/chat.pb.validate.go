@@ -101,36 +101,6 @@ func (m *ChatMessage) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if t := m.GetTimestamp(); t != nil {
-		ts, err := t.AsTime(), t.CheckValid()
-		if err != nil {
-			err = ChatMessageValidationError{
-				field:  "Timestamp",
-				reason: "value is not a valid timestamp",
-				cause:  err,
-			}
-			if !all {
-				return err
-			}
-			errors = append(errors, err)
-		} else {
-
-			now := time.Now()
-
-			if ts.Sub(now) <= 0 {
-				err := ChatMessageValidationError{
-					field:  "Timestamp",
-					reason: "value must be greater than now",
-				}
-				if !all {
-					return err
-				}
-				errors = append(errors, err)
-			}
-
-		}
-	}
-
 	if len(errors) > 0 {
 		return ChatMessageMultiError(errors)
 	}

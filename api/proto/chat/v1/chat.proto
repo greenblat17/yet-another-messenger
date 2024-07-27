@@ -24,7 +24,7 @@ message ChatMessage {
     string senderId = 2 [(validate.rules).string = {min_len: 1}];
     string text = 3 [(validate.rules).string = {min_len: 1}];
     google.protobuf.Timestamp timestamp = 4 [
-        (validate.rules).timestamp.required = true,
+        (validate.rules).timestamp.required = true
       ]
     ;
   }
