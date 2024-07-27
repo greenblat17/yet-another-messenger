@@ -1,8 +1,8 @@
 syntax = "proto3";
 
-package user;
+package friendship;
 
-option go_package = "github.com/greenblat17/yet-another-messenger/pkg/grpc/user;user";
+option go_package = "github.com/greenblat17/yet-another-messenger/pkg/grpc/friendship;friendship";
 
 import "google/protobuf/timestamp.proto";
 import "validate/validate.proto";

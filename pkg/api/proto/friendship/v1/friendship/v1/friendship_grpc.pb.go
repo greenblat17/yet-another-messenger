@@ -4,7 +4,7 @@
 // - protoc             v3.20.3
 // source: friendship/v1/friendship.proto
 
-package user
+package friendship
 
 import (
 	context "context"
@@ -19,11 +19,11 @@ import (
 const _ = grpc.SupportPackageIsVersion8
 
 const (
-	FriendshipService_SendFriendRequest_FullMethodName   = "/user.FriendshipService/SendFriendRequest"
-	FriendshipService_AcceptFriendRequest_FullMethodName = "/user.FriendshipService/AcceptFriendRequest"
-	FriendshipService_RejectFriendRequest_FullMethodName = "/user.FriendshipService/RejectFriendRequest"
-	FriendshipService_RemoveFriend_FullMethodName        = "/user.FriendshipService/RemoveFriend"
-	FriendshipService_GetFriends_FullMethodName          = "/user.FriendshipService/GetFriends"
+	FriendshipService_SendFriendRequest_FullMethodName   = "/friendship.FriendshipService/SendFriendRequest"
+	FriendshipService_AcceptFriendRequest_FullMethodName = "/friendship.FriendshipService/AcceptFriendRequest"
+	FriendshipService_RejectFriendRequest_FullMethodName = "/friendship.FriendshipService/RejectFriendRequest"
+	FriendshipService_RemoveFriend_FullMethodName        = "/friendship.FriendshipService/RemoveFriend"
+	FriendshipService_GetFriends_FullMethodName          = "/friendship.FriendshipService/GetFriends"
 )
 
 // FriendshipServiceClient is the client API for FriendshipService service.
@@ -233,7 +233,7 @@ func _FriendshipService_GetFriends_Handler(srv interface{}, ctx context.Context,
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var FriendshipService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "user.FriendshipService",
+	ServiceName: "friendship.FriendshipService",
 	HandlerType: (*FriendshipServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{

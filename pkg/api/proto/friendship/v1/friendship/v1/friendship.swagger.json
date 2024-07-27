@@ -23,7 +23,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/userFriendResponse"
+              "$ref": "#/definitions/friendshipFriendResponse"
             }
           },
           "default": {
@@ -39,7 +39,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/userFriendRequest"
+              "$ref": "#/definitions/friendshipFriendRequest"
             }
           }
         ],
@@ -55,7 +55,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/userFriendResponse"
+              "$ref": "#/definitions/friendshipFriendResponse"
             }
           },
           "default": {
@@ -71,7 +71,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/userFriendRequest"
+              "$ref": "#/definitions/friendshipFriendRequest"
             }
           }
         ],
@@ -87,7 +87,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/userFriendResponse"
+              "$ref": "#/definitions/friendshipFriendResponse"
             }
           },
           "default": {
@@ -103,7 +103,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/userFriendRequest"
+              "$ref": "#/definitions/friendshipFriendRequest"
             }
           }
         ],
@@ -119,7 +119,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/userGetFriendsResponse"
+              "$ref": "#/definitions/friendshipGetFriendsResponse"
             }
           },
           "default": {
@@ -149,7 +149,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/userRemoveFriendResponse"
+              "$ref": "#/definitions/friendshipRemoveFriendResponse"
             }
           },
           "default": {
@@ -180,6 +180,56 @@
     }
   },
   "definitions": {
+    "friendshipFriend": {
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string"
+        },
+        "nickname": {
+          "type": "string"
+        }
+      }
+    },
+    "friendshipFriendRequest": {
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string"
+        },
+        "friendId": {
+          "type": "string"
+        }
+      }
+    },
+    "friendshipFriendResponse": {
+      "type": "object",
+      "properties": {
+        "success": {
+          "type": "boolean"
+        }
+      }
+    },
+    "friendshipGetFriendsResponse": {
+      "type": "object",
+      "properties": {
+        "friends": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/friendshipFriend"
+          }
+        }
+      }
+    },
+    "friendshipRemoveFriendResponse": {
+      "type": "object",
+      "properties": {
+        "success": {
+          "type": "boolean"
+        }
+      }
+    },
     "protobufAny": {
       "type": "object",
       "properties": {
@@ -205,56 +255,6 @@
             "type": "object",
             "$ref": "#/definitions/protobufAny"
           }
-        }
-      }
-    },
-    "userFriend": {
-      "type": "object",
-      "properties": {
-        "userId": {
-          "type": "string"
-        },
-        "nickname": {
-          "type": "string"
-        }
-      }
-    },
-    "userFriendRequest": {
-      "type": "object",
-      "properties": {
-        "userId": {
-          "type": "string"
-        },
-        "friendId": {
-          "type": "string"
-        }
-      }
-    },
-    "userFriendResponse": {
-      "type": "object",
-      "properties": {
-        "success": {
-          "type": "boolean"
-        }
-      }
-    },
-    "userGetFriendsResponse": {
-      "type": "object",
-      "properties": {
-        "friends": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "$ref": "#/definitions/userFriend"
-          }
-        }
-      }
-    },
-    "userRemoveFriendResponse": {
-      "type": "object",
-      "properties": {
-        "success": {
-          "type": "boolean"
         }
       }
     }

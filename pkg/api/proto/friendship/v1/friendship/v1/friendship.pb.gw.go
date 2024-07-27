@@ -2,11 +2,11 @@
 // source: friendship/v1/friendship.proto
 
 /*
-Package user is a reverse proxy.
+Package friendship is a reverse proxy.
 
 It translates gRPC into RESTful JSON APIs.
 */
-package user
+package friendship
 
 import (
 	"context"
@@ -247,7 +247,7 @@ func RegisterFriendshipServiceHandlerServer(ctx context.Context, mux *runtime.Se
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/user.FriendshipService/SendFriendRequest", runtime.WithHTTPPathPattern("/v1/friends/request"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/friendship.FriendshipService/SendFriendRequest", runtime.WithHTTPPathPattern("/v1/friends/request"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -272,7 +272,7 @@ func RegisterFriendshipServiceHandlerServer(ctx context.Context, mux *runtime.Se
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/user.FriendshipService/AcceptFriendRequest", runtime.WithHTTPPathPattern("/v1/friends/accept"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/friendship.FriendshipService/AcceptFriendRequest", runtime.WithHTTPPathPattern("/v1/friends/accept"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -297,7 +297,7 @@ func RegisterFriendshipServiceHandlerServer(ctx context.Context, mux *runtime.Se
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/user.FriendshipService/RejectFriendRequest", runtime.WithHTTPPathPattern("/v1/friends/reject"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/friendship.FriendshipService/RejectFriendRequest", runtime.WithHTTPPathPattern("/v1/friends/reject"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -322,7 +322,7 @@ func RegisterFriendshipServiceHandlerServer(ctx context.Context, mux *runtime.Se
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/user.FriendshipService/RemoveFriend", runtime.WithHTTPPathPattern("/v1/friends/{userId}/{friendId}"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/friendship.FriendshipService/RemoveFriend", runtime.WithHTTPPathPattern("/v1/friends/{userId}/{friendId}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -347,7 +347,7 @@ func RegisterFriendshipServiceHandlerServer(ctx context.Context, mux *runtime.Se
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/user.FriendshipService/GetFriends", runtime.WithHTTPPathPattern("/v1/friends/{userId}"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/friendship.FriendshipService/GetFriends", runtime.WithHTTPPathPattern("/v1/friends/{userId}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -411,7 +411,7 @@ func RegisterFriendshipServiceHandlerClient(ctx context.Context, mux *runtime.Se
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/user.FriendshipService/SendFriendRequest", runtime.WithHTTPPathPattern("/v1/friends/request"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/friendship.FriendshipService/SendFriendRequest", runtime.WithHTTPPathPattern("/v1/friends/request"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -433,7 +433,7 @@ func RegisterFriendshipServiceHandlerClient(ctx context.Context, mux *runtime.Se
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/user.FriendshipService/AcceptFriendRequest", runtime.WithHTTPPathPattern("/v1/friends/accept"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/friendship.FriendshipService/AcceptFriendRequest", runtime.WithHTTPPathPattern("/v1/friends/accept"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -455,7 +455,7 @@ func RegisterFriendshipServiceHandlerClient(ctx context.Context, mux *runtime.Se
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/user.FriendshipService/RejectFriendRequest", runtime.WithHTTPPathPattern("/v1/friends/reject"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/friendship.FriendshipService/RejectFriendRequest", runtime.WithHTTPPathPattern("/v1/friends/reject"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -477,7 +477,7 @@ func RegisterFriendshipServiceHandlerClient(ctx context.Context, mux *runtime.Se
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/user.FriendshipService/RemoveFriend", runtime.WithHTTPPathPattern("/v1/friends/{userId}/{friendId}"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/friendship.FriendshipService/RemoveFriend", runtime.WithHTTPPathPattern("/v1/friends/{userId}/{friendId}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -499,7 +499,7 @@ func RegisterFriendshipServiceHandlerClient(ctx context.Context, mux *runtime.Se
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/user.FriendshipService/GetFriends", runtime.WithHTTPPathPattern("/v1/friends/{userId}"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/friendship.FriendshipService/GetFriends", runtime.WithHTTPPathPattern("/v1/friends/{userId}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
