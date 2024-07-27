@@ -2,32 +2,34 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"os"
 
-	"github.com/sirupsen/logrus"
+	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 )
 
 func main() {
-	logrus.Info("Starting server...")
+	e := echo.New()
 
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintln(w, "Hello from Auth Service")
+	e.Use(middleware.Logger())
+	e.Use(middleware.Recover())
+
+	e.GET("/", func(c echo.Context) error {
+		return c.HTML(http.StatusOK, "Hello from Auth Service")
 	})
 
-	http.HandleFunc("/live", func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusOK)
-		fmt.Fprintln(w, "Auth Service is alive")
+	e.GET("/live", func(c echo.Context) error {
+		return c.HTML(http.StatusOK, "Auth Service is alive")
 	})
 
-	http.HandleFunc("/ready", func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusOK)
-		fmt.Fprintln(w, "Auth Service is ready")
+	e.GET("/ready", func(c echo.Context) error {
+		return c.HTML(http.StatusOK, "Auth Service is alive")
 	})
 
-	http.HandleFunc("/start-up", func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusOK)
-		fmt.Fprintln(w, "Auth Service is start up")
+	e.GET("/start-up", func(c echo.Context) error {
+		return c.HTML(http.StatusOK, "Auth Service is start up")
 	})
 
 	port, ok := os.LookupEnv("AUTH_PORT")
@@ -35,5 +37,8 @@ func main() {
 		port = "8080"
 	}
 
-	http.ListenAndServe(fmt.Sprintf(":%s", port), nil)
+	err := http.ListenAndServe(fmt.Sprintf(":%s", port), nil)
+	if err != nil {
+		log.Fatal(err)
+	}
 }
