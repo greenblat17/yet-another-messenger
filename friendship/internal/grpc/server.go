@@ -11,8 +11,8 @@ import (
 	"os/signal"
 	"time"
 
-	grpcserver "github.com/greenblat17/yet-another-messenger/auth/api/grpc"
-	"github.com/greenblat17/yet-another-messenger/pkg/api/proto/auth/v1/auth/v1"
+	grpcservice "github.com/greenblat17/yet-another-messenger/friendship/internal/api/grpc"
+	"github.com/greenblat17/yet-another-messenger/pkg/api/proto/friendship/v1/friendship/v1"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -43,7 +43,7 @@ func NewGRPCServer(probeHandler ProbeHandler) *AuthServer {
 		grpc.KeepaliveParams(kasp),
 	)
 
-	auth.RegisterAuthServiceServer(grpcServer, grpcserver.NewAuthService())
+	friendship.RegisterFriendshipServiceServer(grpcServer, grpcservice.NewFriendshipService())
 
 	return &AuthServer{
 		Server:       grpcServer,
@@ -72,7 +72,7 @@ func (s *AuthServer) RunGRPCServer(port string) {
 }
 
 func (s *AuthServer) RunProxyServer(port string) {
-	grpcServerEndpoint := flag.String("grpc-endpoint", "localhost:50050", "gRPC endpoint")
+	grpcServerEndpoint := flag.String("grpc-endpoint", fmt.Sprintf("localhost:%s", port), "gRPC endpoint")
 
 	ctx := context.Background()
 	ctx, cancel := context.WithCancel(ctx)
@@ -105,9 +105,9 @@ func (s *AuthServer) RunProxyServer(port string) {
 	}
 
 	// grpc
-	err = auth.RegisterAuthServiceHandlerFromEndpoint(ctx, mux, *grpcServerEndpoint, opts)
+	err = friendship.RegisterFriendshipServiceHandlerFromEndpoint(ctx, mux, *grpcServerEndpoint, opts)
 	if err != nil {
-		log.Fatalf("failed to RegisterOrderHandlerFromEndpoint: %v", err)
+		log.Fatalf("failed to RegisterFriendshipServiceHandlerFromEndpoint: %v", err)
 	}
 
 	httpServer := &http.Server{

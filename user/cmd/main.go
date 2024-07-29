@@ -1,44 +1,40 @@
 package main
 
 import (
-	"fmt"
-	"log"
-	"net/http"
 	"os"
+	"sync"
 
-	"github.com/labstack/echo/v4"
-	"github.com/labstack/echo/v4/middleware"
+	http "github.com/greenblat17/yet-another-messenger/user/api/http"
+	"github.com/greenblat17/yet-another-messenger/user/internal/grpc"
 )
 
 func main() {
-	e := echo.New()
+	probeHandler := http.NewProbeHandler()
 
-	e.Use(middleware.Logger())
-	e.Use(middleware.Recover())
+	server := grpc.NewGRPCServer(probeHandler)
 
-	e.GET("/", func(c echo.Context) error {
-		return c.HTML(http.StatusOK, "Hello from Chat Service")
-	})
-
-	e.GET("/live", func(c echo.Context) error {
-		return c.HTML(http.StatusOK, "Chat Service is alive")
-	})
-
-	e.GET("/ready", func(c echo.Context) error {
-		return c.HTML(http.StatusOK, "Chat Service is alive")
-	})
-
-	e.GET("/start-up", func(c echo.Context) error {
-		return c.HTML(http.StatusOK, "Chat Service is start up")
-	})
-
-	port, ok := os.LookupEnv("USER_PORT")
+	httpPort, ok := os.LookupEnv("CHAT_HTTP_PORT")
 	if !ok {
-		port = "8081"
+		httpPort = "8082"
 	}
 
-	err := http.ListenAndServe(fmt.Sprintf(":%s", port), nil)
-	if err != nil {
-		log.Fatal(err)
+	grpcPort, ok := os.LookupEnv("CHAT_GRPC_PORT")
+	if !ok {
+		grpcPort = "50052"
 	}
+
+	wg := sync.WaitGroup{}
+	wg.Add(2)
+
+	go func() {
+		defer wg.Done()
+		server.RunGRPCServer(grpcPort)
+	}()
+
+	go func() {
+		defer wg.Done()
+		server.RunProxyServer(httpPort)
+	}()
+
+	wg.Wait()
 }

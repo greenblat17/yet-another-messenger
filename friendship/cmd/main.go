@@ -4,12 +4,12 @@ import (
 	"os"
 	"sync"
 
-	handler "github.com/greenblat17/yet-another-messenger/auth/api/http"
-	"github.com/greenblat17/yet-another-messenger/friendship/grpc"
+	"github.com/greenblat17/yet-another-messenger/friendship/internal/api/http"
+	"github.com/greenblat17/yet-another-messenger/friendship/internal/grpc"
 )
 
 func main() {
-	probeHandler := handler.NewProbeHandler()
+	probeHandler := http.NewProbeHandler()
 
 	server := grpc.NewGRPCServer(probeHandler)
 

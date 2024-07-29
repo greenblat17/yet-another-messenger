@@ -11,8 +11,8 @@ import (
 	"os/signal"
 	"time"
 
-	grpcservice "github.com/greenblat17/yet-another-messenger/chat/api/grpc"
-	"github.com/greenblat17/yet-another-messenger/pkg/api/proto/chat/v1/chat/v1"
+	"github.com/greenblat17/yet-another-messenger/pkg/api/proto/user/v1/user/v1"
+	grpcservice "github.com/greenblat17/yet-another-messenger/user/api/grpc"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -25,12 +25,12 @@ type ProbeHandler interface {
 	Ready(w http.ResponseWriter, r *http.Request, pathParams map[string]string)
 }
 
-type AuthServer struct {
+type UserServer struct {
 	Server       *grpc.Server
 	probeHandler ProbeHandler
 }
 
-func NewGRPCServer(probeHandler ProbeHandler) *AuthServer {
+func NewGRPCServer(probeHandler ProbeHandler) *UserServer {
 	kasp := keepalive.ServerParameters{
 		MaxConnectionIdle:     30 * time.Minute, // максимальное время бездействия соединения
 		MaxConnectionAge:      30 * time.Minute, // максимальное время соединения
@@ -43,15 +43,15 @@ func NewGRPCServer(probeHandler ProbeHandler) *AuthServer {
 		grpc.KeepaliveParams(kasp),
 	)
 
-	chat.RegisterChatServiceServer(grpcServer, grpcservice.NewChatService())
+	user.RegisterUserServiceServer(grpcServer, grpcservice.NewUserService())
 
-	return &AuthServer{
+	return &UserServer{
 		Server:       grpcServer,
 		probeHandler: probeHandler,
 	}
 }
 
-func (s *AuthServer) RunGRPCServer(port string) {
+func (s *UserServer) RunGRPCServer(port string) {
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%s", port))
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
@@ -71,7 +71,7 @@ func (s *AuthServer) RunGRPCServer(port string) {
 	s.Server.GracefulStop()
 }
 
-func (s *AuthServer) RunProxyServer(port string) {
+func (s *UserServer) RunProxyServer(port string) {
 	grpcServerEndpoint := flag.String("grpc-endpoint", fmt.Sprintf("localhost:%s", port), "gRPC endpoint")
 
 	ctx := context.Background()
@@ -91,23 +91,23 @@ func (s *AuthServer) RunProxyServer(port string) {
 	// http
 	err := mux.HandlePath(http.MethodGet, "/start-up", s.probeHandler.StartUp)
 	if err != nil {
-		log.Fatalf("failed to RegisterOrderHandlerFromEndpoint: %v", err)
+		log.Fatalf("failed to RegisterUserServiceHandlerFromEndpoint: %v", err)
 	}
 
 	err = mux.HandlePath(http.MethodGet, "/live", s.probeHandler.Live)
 	if err != nil {
-		log.Fatalf("failed to RegisterOrderHandlerFromEndpoint: %v", err)
+		log.Fatalf("failed to RegisterUserServiceHandlerFromEndpoint: %v", err)
 	}
 
 	err = mux.HandlePath(http.MethodGet, "/ready", s.probeHandler.Ready)
 	if err != nil {
-		log.Fatalf("failed to RegisterOrderHandlerFromEndpoint: %v", err)
+		log.Fatalf("failed to RegisterUserServiceHandlerFromEndpoint: %v", err)
 	}
 
 	// grpc
-	err = chat.RegisterChatServiceHandlerFromEndpoint(ctx, mux, *grpcServerEndpoint, opts)
+	err = user.RegisterUserServiceHandlerFromEndpoint(ctx, mux, *grpcServerEndpoint, opts)
 	if err != nil {
-		log.Fatalf("failed to RegisterOrderHandlerFromEndpoint: %v", err)
+		log.Fatalf("failed to RegisterUserServiceHandlerFromEndpoint: %v", err)
 	}
 
 	httpServer := &http.Server{

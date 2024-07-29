@@ -4,8 +4,8 @@ import (
 	"os"
 	"sync"
 
-	handler "github.com/greenblat17/yet-another-messenger/auth/api/http"
-	"github.com/greenblat17/yet-another-messenger/auth/grpc"
+	handler "github.com/greenblat17/yet-another-messenger/auth/internal/api/http"
+	"github.com/greenblat17/yet-another-messenger/auth/internal/grpc"
 )
 
 func main() {
