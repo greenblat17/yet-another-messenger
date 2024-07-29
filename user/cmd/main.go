@@ -4,7 +4,7 @@ import (
 	"os"
 	"sync"
 
-	http "github.com/greenblat17/yet-another-messenger/user/api/http"
+	"github.com/greenblat17/yet-another-messenger/user/internal/api/http"
 	"github.com/greenblat17/yet-another-messenger/user/internal/grpc"
 )
 
@@ -15,12 +15,12 @@ func main() {
 
 	httpPort, ok := os.LookupEnv("CHAT_HTTP_PORT")
 	if !ok {
-		httpPort = "8084"
+		httpPort = "8081"
 	}
 
 	grpcPort, ok := os.LookupEnv("CHAT_GRPC_PORT")
 	if !ok {
-		grpcPort = "50054"
+		grpcPort = "50051"
 	}
 
 	wg := sync.WaitGroup{}
