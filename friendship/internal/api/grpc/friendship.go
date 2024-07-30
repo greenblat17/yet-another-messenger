@@ -3,8 +3,7 @@ package grpc
 import (
 	"context"
 
-	"github.com/greenblat17/yet-another-messenger/pkg/api/proto/chat/v1/chat/v1"
-	"github.com/greenblat17/yet-another-messenger/pkg/api/proto/friendship/v1/friendship/v1"
+	friendship "github.com/greenblat17/yet-another-messenger/friendship/pkg/friendship/api/proto"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -15,10 +14,6 @@ type FriendshipService struct {
 
 func NewFriendshipService() *FriendshipService {
 	return &FriendshipService{}
-}
-
-func (s *FriendshipService) SendMessage(req chat.ChatService_SendMessageServer) error {
-	return status.Errorf(codes.Unimplemented, "method SendMessage not implemented")
 }
 
 func (s *FriendshipService) SendFriendRequest(ctx context.Context, req *friendship.FriendRequest) (*friendship.FriendResponse, error) {

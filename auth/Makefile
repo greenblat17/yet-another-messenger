@@ -1,10 +1,7 @@
 LOCAL_BIN:=$(CURDIR)/bin
 
 PROTOC := PATH="$$PATH:$(LOCAL_BIN)" protoc
-AUTH_PROTO_PATH := auth/api/proto
-USER_PROTO_PATH := user/api/proto
-FRIENDSHIP_PROTO_PATH := friendship/api/proto
-CHAT_PROTO_PATH := chat/api/proto
+AUTH_PROTO_PATH := api/proto/v1
 VENDOR_PROTO_DIR := vendor.proto
 
 # Установка всех необходимых зависимостей
@@ -16,7 +13,6 @@ VENDOR_PROTO_DIR := vendor.proto
 	GOBIN=$(LOCAL_BIN) go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-grpc-gateway@v2.20.0
 	GOBIN=$(LOCAL_BIN) go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2@v2.20.0
 	GOBIN=$(LOCAL_BIN) go install github.com/envoyproxy/protoc-gen-validate@v1.0.4
-
 
 # Вендоринг внешних proto файлов
 .vendor-proto: $(VENDOR_PROTO_DIR)/google/protobuf $(VENDOR_PROTO_DIR)/google/api $(VENDOR_PROTO_DIR)/validate $(VENDOR_PROTO_DIR)/protoc-gen-openapiv2/options
@@ -65,47 +61,17 @@ vendor.proto/validate:
 	mv $(VENDOR_PROTO_DIR)/tmp/validate $(VENDOR_PROTO_DIR)/
 	rm -rf $(VENDOR_PROTO_DIR)/tmp
 
-
 # Генерация proto файлов
-define generate_proto
-	mkdir -p $2/pkg/$1
+.PHONY: generate
+generate: .bin-deps .vendor-proto
+	mkdir -p pkg/$(AUTH_PROTO_PATH)
 	$(PROTOC) \
-		-I $1 \
+		-I api/proto \
 		-I $(VENDOR_PROTO_DIR) \
-		$1/$2.proto \
-		--plugin=protoc-gen-go=$(LOCAL_BIN)/protoc-gen-go --go_out=./$2/pkg/$1 --go_opt=paths=source_relative \
-		--plugin=protoc-gen-go-grpc=$(LOCAL_BIN)/protoc-gen-go-grpc --go-grpc_out=./$2/pkg/$1 --go-grpc_opt=paths=source_relative \
-		--plugin=protoc-gen-grpc-gateway=$(LOCAL_BIN)/protoc-gen-grpc-gateway --grpc-gateway_out=./$2/pkg/$1 --grpc-gateway_opt=paths=source_relative,generate_unbound_methods=true \
-		--plugin=protoc-gen-openapiv2=$(LOCAL_BIN)/protoc-gen-openapiv2 --openapiv2_out=./$2/pkg/$1 \
-		--plugin=protoc-gen-validate=$(LOCAL_BIN)/protoc-gen-validate --validate_out="lang=go,paths=source_relative:$2/pkg/$1"
-endef
+		$(AUTH_PROTO_PATH)/auth.proto \
+		--plugin=protoc-gen-go=$(LOCAL_BIN)/protoc-gen-go --go_out=./pkg/$(AUTH_PROTO_PATH) --go_opt=paths=source_relative \
+		--plugin=protoc-gen-go-grpc=$(LOCAL_BIN)/protoc-gen-go-grpc --go-grpc_out=./pkg/$(AUTH_PROTO_PATH) --go-grpc_opt=paths=source_relative \
+		--plugin=protoc-gen-grpc-gateway=$(LOCAL_BIN)/protoc-gen-grpc-gateway --grpc-gateway_out=./pkg/$(AUTH_PROTO_PATH) --grpc-gateway_opt=paths=source_relative,generate_unbound_methods=true \
+		--plugin=protoc-gen-openapiv2=$(LOCAL_BIN)/protoc-gen-openapiv2 --openapiv2_out=./pkg/$(AUTH_PROTO_PATH) \
+		--plugin=protoc-gen-validate=$(LOCAL_BIN)/protoc-gen-validate --validate_out="lang=go,paths=source_relative:pkg/$(AUTH_PROTO_PATH)"
 
-.PHONY: generate-auth
-generate-auth: .bin-deps .vendor-proto
-	$(call generate_proto,$(AUTH_PROTO_PATH),auth)
-
-.PHONY: generate-user
-generate-user: .bin-deps .vendor-proto
-	$(call generate_proto,$(USER_PROTO_PATH),user)
-
-.PHONY: generate-friendship
-generate-friendship: .bin-deps .vendor-proto
-	$(call generate_proto,$(FRIENDSHIP_PROTO_PATH),friendship)
-
-.PHONY: generate-chat
-generate-chat: .bin-deps .vendor-proto
-	$(call generate_proto,$(CHAT_PROTO_PATH),chat)
-
-.PHONY: generate-all
-generate-all: generate-auth generate-user generate-friendship generate-chat
-
-.PHONY: build up down
-
-build:
-	docker compose build
-
-up:
-	docker compose up -d
-
-down:
-	docker compose down

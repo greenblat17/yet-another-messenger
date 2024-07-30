@@ -12,7 +12,7 @@ import (
 	"time"
 
 	grpcserver "github.com/greenblat17/yet-another-messenger/auth/internal/api/grpc"
-	"github.com/greenblat17/yet-another-messenger/pkg/api/proto/auth/v1/auth/v1"
+	auth "github.com/greenblat17/yet-another-messenger/auth/pkg/auth/api/proto"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"

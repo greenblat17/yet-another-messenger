@@ -12,7 +12,7 @@ import (
 	"time"
 
 	grpcservice "github.com/greenblat17/yet-another-messenger/friendship/internal/api/grpc"
-	"github.com/greenblat17/yet-another-messenger/pkg/api/proto/friendship/v1/friendship/v1"
+	friendship "github.com/greenblat17/yet-another-messenger/friendship/pkg/friendship/api/proto"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"

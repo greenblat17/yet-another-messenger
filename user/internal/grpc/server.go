@@ -11,8 +11,8 @@ import (
 	"os/signal"
 	"time"
 
-	"github.com/greenblat17/yet-another-messenger/pkg/api/proto/user/v1/user/v1"
 	grpcservice "github.com/greenblat17/yet-another-messenger/user/internal/api/grpc"
+	user "github.com/greenblat17/yet-another-messenger/user/pkg/user/api/proto"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"

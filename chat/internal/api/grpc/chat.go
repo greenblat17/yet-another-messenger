@@ -3,7 +3,7 @@ package grpc
 import (
 	"context"
 
-	"github.com/greenblat17/yet-another-messenger/pkg/api/proto/chat/v1/chat/v1"
+	chat "github.com/greenblat17/yet-another-messenger/chat/pkg/chat/api/proto"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
