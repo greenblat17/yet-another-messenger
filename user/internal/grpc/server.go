@@ -91,23 +91,23 @@ func (s *UserServer) RunProxyServer(port string) {
 	// http
 	err := mux.HandlePath(http.MethodGet, "/start-up", s.probeHandler.StartUp)
 	if err != nil {
-		log.Fatalf("failed to RegisterUserServiceHandlerFromEndpoint: %v", err)
+		log.Fatalf("failed to RegisterUserHandlerFromEndpoint: %v", err)
 	}
 
 	err = mux.HandlePath(http.MethodGet, "/live", s.probeHandler.Live)
 	if err != nil {
-		log.Fatalf("failed to RegisterUserServiceHandlerFromEndpoint: %v", err)
+		log.Fatalf("failed to RegisterUserHandlerFromEndpoint: %v", err)
 	}
 
 	err = mux.HandlePath(http.MethodGet, "/ready", s.probeHandler.Ready)
 	if err != nil {
-		log.Fatalf("failed to RegisterUserServiceHandlerFromEndpoint: %v", err)
+		log.Fatalf("failed to RegisterUserHandlerFromEndpoint: %v", err)
 	}
 
 	// grpc
 	err = user.RegisterUserServiceHandlerFromEndpoint(ctx, mux, *grpcServerEndpoint, opts)
 	if err != nil {
-		log.Fatalf("failed to RegisterUserServiceHandlerFromEndpoint: %v", err)
+		log.Fatalf("failed to RegisterFriendshipServiceHandlerFromEndpoint: %v", err)
 	}
 
 	httpServer := &http.Server{

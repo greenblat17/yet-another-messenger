@@ -5,6 +5,7 @@ AUTH_PROTO_PATH := auth/api/proto
 USER_PROTO_PATH := user/api/proto
 FRIENDSHIP_PROTO_PATH := friendship/api/proto
 CHAT_PROTO_PATH := chat/api/proto
+CLIENTS_PROTO_PATH := сlients/api/proto
 VENDOR_PROTO_DIR := vendor.proto
 
 # Установка всех необходимых зависимостей
@@ -77,7 +78,7 @@ define generate_proto
 		--plugin=protoc-gen-go-grpc=$(LOCAL_BIN)/protoc-gen-go-grpc --go-grpc_out=./$2/pkg/$1 --go-grpc_opt=paths=source_relative \
 		--plugin=protoc-gen-grpc-gateway=$(LOCAL_BIN)/protoc-gen-grpc-gateway --grpc-gateway_out=./$2/pkg/$1 --grpc-gateway_opt=paths=source_relative,generate_unbound_methods=true \
 		--plugin=protoc-gen-openapiv2=$(LOCAL_BIN)/protoc-gen-openapiv2 --openapiv2_out=./$2/pkg/$1 \
-		--plugin=protoc-gen-validate=$(LOCAL_BIN)/protoc-gen-validate --validate_out="lang=go,paths=source_relative:$2/pkg/$1"
+#		--plugin=protoc-gen-validate=$(LOCAL_BIN)/protoc-gen-validate --validate_out="lang=go,paths=source_relative:$2/pkg/$1"
 endef
 
 .PHONY: generate-auth
@@ -98,6 +99,13 @@ generate-chat: .bin-deps .vendor-proto
 
 .PHONY: generate-all
 generate-all: generate-auth generate-user generate-friendship generate-chat
+
+.PHONY: generate-clients
+generate-clients: .bin-deps .vendor-proto
+	$(call generate_proto,$(CLIENTS_PROTO_PATH),auth)
+#	$(call generate_proto,$(CLIENTS_PROTO_PATH),user)
+#	$(call generate_proto,$(CLIENTS_PROTO_PATH),friendship)
+#	$(call generate_proto,$(CLIENTS_PROTO_PATH),chat)
 
 .PHONY: build up down
 
