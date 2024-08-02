@@ -10,16 +10,28 @@ import (
 )
 
 const (
-	loginCommand         = "login"
-	logoutCommand        = "logout"
-	registerCommand      = "register"
-	chatHistoryCommand   = "chat-history"
-	sendMessageCommand   = "send-msg"
+	// auth
+	loginCommand    = "login"
+	logoutCommand   = "logout"
+	registerCommand = "register"
+
+	// chat
+	chatHistoryCommand = "chat-history"
+	sendMessageCommand = "send-msg"
+
+	// user
 	profileCommand       = "profile"
 	updateProfileCommand = "update-profile"
-	helpCommand          = "help"
-	exitCommand          = "exit"
-	workersCommand       = "workers"
+
+	// friendship
+	sendFriendRequestCommand   = "send-friend-request"
+	acceptFriendRequestCommand = "accept-friend-request"
+	rejectFriendRequest        = "reject-friend-request"
+	removeFriendCommand        = "remove-friend"
+	getFriendsCommand          = "get-friends"
+
+	helpCommand = "help"
+	exitCommand = "exit"
 )
 
 var (
@@ -73,16 +85,37 @@ func initCommandList(processor *processor.CommandProcessor) []command {
 			call:        processor.UpdateUser,
 		},
 		{
+			name:        sendFriendRequestCommand,
+			description: "Отправить заявку в друзья",
+			call:        processor.SendFriendRequest,
+		},
+		{
+			name:        acceptFriendRequestCommand,
+			description: "Принять заявку в друзья",
+			call:        processor.AcceptFriendRequest,
+		},
+		{
+			name:        rejectFriendRequest,
+			description: "Не принимать заявку в друзья",
+			call:        processor.RejectFriendRequest,
+		},
+		{
+			name:        removeFriendCommand,
+			description: "Удалить из друзей",
+			call:        processor.RemoveFriend,
+		},
+		{
+			name:        getFriendsCommand,
+			description: "Список друзей",
+			call:        processor.GetFriends,
+		},
+		{
 			name:        helpCommand,
 			description: "Получить справку",
 		},
 		{
 			name:        exitCommand,
 			description: "Выйти из программы: использование exit или ctrl+c",
-		},
-		{
-			name:        workersCommand,
-			description: "Изменить количество горутин",
 		},
 	}
 }

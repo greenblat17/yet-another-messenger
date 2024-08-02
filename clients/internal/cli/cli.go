@@ -24,23 +24,21 @@ type Job struct {
 }
 
 type CLI struct {
-	processor      *processor.CommandProcessor
-	commandList    []command
-	currentWorkers int
-	jobs           chan Job
-	errors         chan error
-	wg             sync.WaitGroup
-	mu             sync.Mutex // Мьютекс для синхронизации доступа к cancelFuncs
-	running        bool
+	processor   *processor.CommandProcessor
+	commandList []command
+	jobs        chan Job
+	errors      chan error
+	wg          sync.WaitGroup
+	mu          sync.Mutex // Мьютекс для синхронизации доступа к cancelFuncs
+	running     bool
 }
 
 // New создает новый экземпляр CLI.
 func New(handler *processor.CommandProcessor) *CLI {
 	return &CLI{
-		processor:      handler,
-		commandList:    initCommandList(handler),
-		currentWorkers: 0,
-		running:        false,
+		processor:   handler,
+		commandList: initCommandList(handler),
+		running:     false,
 	}
 }
 
