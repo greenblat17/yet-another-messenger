@@ -7,6 +7,9 @@ import (
 	"os"
 	"strings"
 	"sync"
+
+	"github.com/greenblat17/yet-another-messenger/clients/internal/cli/processor"
+	"github.com/greenblat17/yet-another-messenger/clients/pkg/args"
 )
 
 // Notification содержит информацию о состоянии выполнения команды
@@ -21,69 +24,33 @@ type Job struct {
 }
 
 type CLI struct {
-	handler        *Handler
+	processor      *processor.CommandProcessor
 	commandList    []command
 	currentWorkers int
-	notifyChan     chan Notification
 	jobs           chan Job
 	errors         chan error
-	cancelFuncs    []context.CancelFunc
 	wg             sync.WaitGroup
 	mu             sync.Mutex // Мьютекс для синхронизации доступа к cancelFuncs
 	running        bool
 }
 
 // New создает новый экземпляр CLI.
-func New(handler *Handler) *CLI {
+func New(handler *processor.CommandProcessor) *CLI {
 	return &CLI{
-		handler:        handler,
+		processor:      handler,
 		commandList:    initCommandList(handler),
 		currentWorkers: 0,
-		cancelFuncs:    []context.CancelFunc{},
 		running:        false,
 	}
 }
 
 // Run запускает ввод команд от пользователя.
-func (c *CLI) Run(ctx context.Context, numWorkers int) {
-	c.notifyChan = make(chan Notification)
+func (c *CLI) Run(ctx context.Context) {
 	c.jobs = make(chan Job)
 	c.errors = make(chan error)
 
-	go c.handleNotifications(ctx)
 	go c.handleErrors(ctx)
 	go c.inputCommands(ctx)
-
-	c.adjustWorkerCount(ctx, numWorkers)
-}
-
-func (c *CLI) runWorker(ctx context.Context, workerID int) {
-	defer c.wg.Done()
-
-	for {
-		select {
-		case job, ok := <-c.jobs:
-			if !ok {
-				return
-			}
-
-			c.notifyChan <- Notification{WorkerID: workerID, Message: "started processing"}
-
-			resp, err := c.handleCommands(ctx, job)
-			if err != nil {
-				c.recordError(err)
-				c.notifyChan <- Notification{WorkerID: workerID, Message: "finished processing with error"}
-				continue
-			}
-
-			fmt.Println(resp)
-
-			c.notifyChan <- Notification{WorkerID: workerID, Message: "finished processing"}
-		case <-ctx.Done():
-			// Завершение горутины при получении сигнала завершения
-			return
-		}
-	}
 }
 
 func (c *CLI) inputCommands(ctx context.Context) {
@@ -114,7 +81,7 @@ func (c *CLI) inputCommands(ctx context.Context) {
 }
 
 // handleCommands направляет команды от пользователя в нужный метод.
-func (c *CLI) handleCommands(ctx context.Context, job Job) (string, error) {
+func (c *CLI) handleCommands(ctx context.Context, job Job) (any, error) {
 	commandName := job.CommandName
 	args := job.Args
 
@@ -123,43 +90,26 @@ func (c *CLI) handleCommands(ctx context.Context, job Job) (string, error) {
 		c.help()
 	case exitCommand:
 		c.exit()
-	case workersCommand:
-		return "", c.setWorkerNum(ctx, args)
 	default:
-		// orders command
 		resp, err := c.executeCommands(ctx, commandName, args)
 		if err != nil {
 			return "", err
 		}
-
 		return resp, nil
-
 	}
 
 	return "", nil
 }
 
-func (c *CLI) executeCommands(ctx context.Context, commandName string, args []string) (string, error) {
+func (c *CLI) executeCommands(ctx context.Context, commandName string, arguments []string) (any, error) {
 	for _, cmd := range c.commandList {
 		if cmd.name == commandName {
-			return cmd.call(ctx, args)
+			mapArgs := args.ConvertArgsSliceToMap(arguments)
+			return cmd.call(ctx, mapArgs)
 		}
 	}
 
 	return "", ErrCommandNotFound
-}
-
-// handleNotifications обрабатывает нотификации о состоянии выполнения команд.
-func (c *CLI) handleNotifications(ctx context.Context) {
-	for {
-		select {
-		case notify := <-c.notifyChan:
-			fmt.Printf("[INFO] Worker %d %s\n", notify.WorkerID, notify.Message)
-		case <-ctx.Done():
-			// Завершение горутины при получении сигнала завершения
-			return
-		}
-	}
 }
 
 func (c *CLI) handleErrors(ctx context.Context) {

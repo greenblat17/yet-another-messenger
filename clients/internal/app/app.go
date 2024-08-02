@@ -9,10 +9,6 @@ import (
 	"github.com/greenblat17/yet-another-messenger/clients/internal/cli"
 )
 
-const (
-	defaultNumWorkers = 2
-)
-
 func Run(commands *cli.CLI) {
 	ctx, cancel := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 	defer cancel()
@@ -21,7 +17,7 @@ func Run(commands *cli.CLI) {
 	defer commands.SetRunning(false)
 
 	go func() {
-		commands.Run(ctx, defaultNumWorkers)
+		commands.Run(ctx)
 	}()
 
 	<-ctx.Done()

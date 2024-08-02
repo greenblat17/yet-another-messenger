@@ -1,13 +1,13 @@
-package cli
+package processor
 
 import (
-	"github.com/greenblat17/yet-another-messenger/pkg/api/proto/auth/v1/auth/v1"
-	"github.com/greenblat17/yet-another-messenger/pkg/api/proto/chat/v1/chat/v1"
-	"github.com/greenblat17/yet-another-messenger/pkg/api/proto/friendship/v1/friendship/v1"
-	"github.com/greenblat17/yet-another-messenger/pkg/api/proto/user/v1/user/v1"
+	"github.com/greenblat17/yet-another-messenger/clients/pkg/clients/api/proto/auth"
+	"github.com/greenblat17/yet-another-messenger/clients/pkg/clients/api/proto/chat"
+	"github.com/greenblat17/yet-another-messenger/clients/pkg/clients/api/proto/friendship"
+	"github.com/greenblat17/yet-another-messenger/clients/pkg/clients/api/proto/user"
 )
 
-type CommandClient struct {
+type CommandProcessor struct {
 	authClient       auth.AuthServiceClient
 	userClient       user.UserServiceClient
 	friendshipClient friendship.FriendshipServiceClient
@@ -19,8 +19,8 @@ func NewCommandClient(
 	userClient user.UserServiceClient,
 	friendshipClient friendship.FriendshipServiceClient,
 	chatClient chat.ChatServiceClient,
-) *CommandClient {
-	return &CommandClient{
+) *CommandProcessor {
+	return &CommandProcessor{
 		authClient:       authClient,
 		userClient:       userClient,
 		friendshipClient: friendshipClient,

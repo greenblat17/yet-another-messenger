@@ -6,6 +6,11 @@ import (
 
 	"github.com/greenblat17/yet-another-messenger/clients/internal/app"
 	"github.com/greenblat17/yet-another-messenger/clients/internal/cli"
+	"github.com/greenblat17/yet-another-messenger/clients/internal/cli/processor"
+	"github.com/greenblat17/yet-another-messenger/clients/pkg/clients/api/proto/auth"
+	"github.com/greenblat17/yet-another-messenger/clients/pkg/clients/api/proto/chat"
+	"github.com/greenblat17/yet-another-messenger/clients/pkg/clients/api/proto/friendship"
+	"github.com/greenblat17/yet-another-messenger/clients/pkg/clients/api/proto/user"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
@@ -26,16 +31,15 @@ func main() {
 	defer func() { _ = chatConn.Close() }()
 
 	// clients
-	auth.UnimplementedAuthServiceServer{}
-	//authClient := auth.NewAuthServiceClient(authConn)
-	//userClient := user.NewUserServiceClient(userConn)
-	//friendshipClient := friendship.NewFriendshipServiceClient(friendshipConn)
-	//chatClient := chat.NewChatServiceClient(chatConn)
+	authClient := auth.NewAuthServiceClient(authConn)
+	userClient := user.NewUserServiceClient(userConn)
+	friendshipClient := friendship.NewFriendshipServiceClient(friendshipConn)
+	chatClient := chat.NewChatServiceClient(chatConn)
 
-	client := cli.NewCommandClient(authClient, userClient, friendshipClient, chatClient)
-	commands := cli.New(client)
+	commandClient := processor.NewCommandClient(authClient, userClient, friendshipClient, chatClient)
+	cliApp := cli.New(commandClient)
 
-	app.Run(commands)
+	app.Run(cliApp)
 }
 
 func createConnection(port int) *grpc.ClientConn {
