@@ -226,7 +226,7 @@ func RegisterAuthServiceHandler(ctx context.Context, mux *runtime.ServeMux, conn
 
 // RegisterAuthServiceHandlerClient registers the http handlers for service AuthService
 // to "mux". The handlers forward requests to the grpc endpoint over the given implementation of "AuthServiceClient".
-// Note: the gRPC framework executes interceptors within the gRPC handler. If the passed in "AuthServiceClient"
+// Note: the gRPC framework executes interceptors within the gRPC processor. If the passed in "AuthServiceClient"
 // doesn't go through the normal gRPC flow (creating a gRPC client etc.) then it will be up to the passed in
 // "AuthServiceClient" to call the correct interceptors.
 func RegisterAuthServiceHandlerClient(ctx context.Context, mux *runtime.ServeMux, client AuthServiceClient) error {

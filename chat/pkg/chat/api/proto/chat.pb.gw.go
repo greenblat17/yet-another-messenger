@@ -200,7 +200,7 @@ func RegisterChatServiceHandler(ctx context.Context, mux *runtime.ServeMux, conn
 
 // RegisterChatServiceHandlerClient registers the http handlers for service ChatService
 // to "mux". The handlers forward requests to the grpc endpoint over the given implementation of "ChatServiceClient".
-// Note: the gRPC framework executes interceptors within the gRPC handler. If the passed in "ChatServiceClient"
+// Note: the gRPC framework executes interceptors within the gRPC processor. If the passed in "ChatServiceClient"
 // doesn't go through the normal gRPC flow (creating a gRPC client etc.) then it will be up to the passed in
 // "ChatServiceClient" to call the correct interceptors.
 func RegisterChatServiceHandlerClient(ctx context.Context, mux *runtime.ServeMux, client ChatServiceClient) error {

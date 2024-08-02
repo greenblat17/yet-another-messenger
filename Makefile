@@ -5,7 +5,7 @@ AUTH_PROTO_PATH := auth/api/proto
 USER_PROTO_PATH := user/api/proto
 FRIENDSHIP_PROTO_PATH := friendship/api/proto
 CHAT_PROTO_PATH := chat/api/proto
-CLIENTS_PROTO_PATH := сlients/api/proto
+CLIENTS_PROTO_PATH := clients/api/proto
 VENDOR_PROTO_DIR := vendor.proto
 
 # Установка всех необходимых зависимостей
@@ -68,44 +68,47 @@ vendor.proto/validate:
 
 
 # Генерация proto файлов
+
 define generate_proto
-	mkdir -p $2/pkg/$1
+	mkdir -p $3/pkg/$1/$2
 	$(PROTOC) \
-		-I $1 \
-		-I $(VENDOR_PROTO_DIR) \
-		$1/$2.proto \
-		--plugin=protoc-gen-go=$(LOCAL_BIN)/protoc-gen-go --go_out=./$2/pkg/$1 --go_opt=paths=source_relative \
-		--plugin=protoc-gen-go-grpc=$(LOCAL_BIN)/protoc-gen-go-grpc --go-grpc_out=./$2/pkg/$1 --go-grpc_opt=paths=source_relative \
-		--plugin=protoc-gen-grpc-gateway=$(LOCAL_BIN)/protoc-gen-grpc-gateway --grpc-gateway_out=./$2/pkg/$1 --grpc-gateway_opt=paths=source_relative,generate_unbound_methods=true \
-		--plugin=protoc-gen-openapiv2=$(LOCAL_BIN)/protoc-gen-openapiv2 --openapiv2_out=./$2/pkg/$1 \
-#		--plugin=protoc-gen-validate=$(LOCAL_BIN)/protoc-gen-validate --validate_out="lang=go,paths=source_relative:$2/pkg/$1"
+  	-I $1 \
+	-I $(VENDOR_PROTO_DIR) \
+	$1/$2.proto \
+	--plugin=protoc-gen-go=$(LOCAL_BIN)/protoc-gen-go --go_out=./$3/pkg/$1/$2 --go_opt=paths=source_relative \
+ 	--plugin=protoc-gen-go-grpc=$(LOCAL_BIN)/protoc-gen-go-grpc --go-grpc_out=./$3/pkg/$1/$2 --go-grpc_opt=paths=source_relative \
+ 	--plugin=protoc-gen-grpc-gateway=$(LOCAL_BIN)/protoc-gen-grpc-gateway --grpc-gateway_out=./$3/pkg/$1/$2 --grpc-gateway_opt=paths=source_relative,generate_unbound_methods=true \
+ 	--plugin=protoc-gen-openapiv2=$(LOCAL_BIN)/protoc-gen-openapiv2 --openapiv2_out=./$3/pkg/$1/$2 \
+  	--plugin=protoc-gen-validate=$(LOCAL_BIN)/protoc-gen-validate --validate_out="lang=go,paths=source_relative:$3/pkg/$1/$2"
 endef
+
+
 
 .PHONY: generate-auth
 generate-auth: .bin-deps .vendor-proto
-	$(call generate_proto,$(AUTH_PROTO_PATH),auth)
+	$(call generate_proto,$(AUTH_PROTO_PATH),auth,auth)
 
 .PHONY: generate-user
 generate-user: .bin-deps .vendor-proto
-	$(call generate_proto,$(USER_PROTO_PATH),user)
+	$(call generate_proto,$(USER_PROTO_PATH),user,user)
 
 .PHONY: generate-friendship
 generate-friendship: .bin-deps .vendor-proto
-	$(call generate_proto,$(FRIENDSHIP_PROTO_PATH),friendship)
+	$(call generate_proto,$(FRIENDSHIP_PROTO_PATH),friendship,friendship)
 
 .PHONY: generate-chat
 generate-chat: .bin-deps .vendor-proto
-	$(call generate_proto,$(CHAT_PROTO_PATH),chat)
+	$(call generate_proto,$(CHAT_PROTO_PATH),chat,chat)
 
 .PHONY: generate-all
 generate-all: generate-auth generate-user generate-friendship generate-chat
 
 .PHONY: generate-clients
 generate-clients: .bin-deps .vendor-proto
-	$(call generate_proto,$(CLIENTS_PROTO_PATH),auth)
-#	$(call generate_proto,$(CLIENTS_PROTO_PATH),user)
-#	$(call generate_proto,$(CLIENTS_PROTO_PATH),friendship)
-#	$(call generate_proto,$(CLIENTS_PROTO_PATH),chat)
+	$(call generate_proto,$(CLIENTS_PROTO_PATH),auth,clients)
+	$(call generate_proto,$(CLIENTS_PROTO_PATH),user,clients)
+	$(call generate_proto,$(CLIENTS_PROTO_PATH),friendship,clients)
+	$(call generate_proto,$(CLIENTS_PROTO_PATH),chat,clients)
 
 .PHONY: build up down
 

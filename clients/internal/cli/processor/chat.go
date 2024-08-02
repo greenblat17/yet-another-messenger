@@ -7,12 +7,12 @@ import (
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
-func (c *CommandProcessor) GetChatHistory(ctx context.Context, args map[string]string) (any, error) {
+func (p *CommandProcessor) GetChatHistory(ctx context.Context, args map[string]string) (any, error) {
 	req := &chat.GetChatHistoryRequest{
 		ConversationId: args["conversation_id"],
 	}
 
-	resp, err := c.chatClient.GetChatHistory(ctx, req)
+	resp, err := p.chatClient.GetChatHistory(ctx, req)
 	if err != nil {
 		return nil, err
 	}
@@ -20,8 +20,8 @@ func (c *CommandProcessor) GetChatHistory(ctx context.Context, args map[string]s
 	return resp, nil
 }
 
-func (c *CommandProcessor) SendMessage(ctx context.Context, args map[string]string) (any, error) {
-	stream, err := c.chatClient.SendMessage(ctx)
+func (p *CommandProcessor) SendMessage(ctx context.Context, args map[string]string) (any, error) {
+	stream, err := p.chatClient.SendMessage(ctx)
 	if err != nil {
 		return nil, err
 	}
