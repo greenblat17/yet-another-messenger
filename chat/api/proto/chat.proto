@@ -10,7 +10,11 @@ import "google/api/annotations.proto";
 import "protoc-gen-openapiv2/options/annotations.proto";
 
 service ChatService {
-    rpc SendMessage(stream ChatMessage) returns (stream ChatMessage);
+    rpc SendMessage(stream ChatMessage) returns (stream ChatMessage){
+      option (google.api.http) = {
+        get: "/v1/chat/send-message"
+      };
+    };
 
     rpc GetChatHistory(GetChatHistoryRequest) returns (GetChatHistoryResponse) {
       option (google.api.http) = {
