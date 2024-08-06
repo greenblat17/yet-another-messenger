@@ -1,0 +1,53 @@
+syntax = "proto3";
+
+package user;
+
+option go_package = "github.com/greenblat17/yet-another-messenger/pkg/grpc/user;user";
+
+import "google/protobuf/timestamp.proto";
+import "validate/validate.proto";
+import "google/api/annotations.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+
+service UserService {
+  rpc GetUser(GetUserRequest) returns (GetUserResponse) {
+    option (google.api.http) = {
+      get: "/v1/user/{username}"
+    };
+  };
+
+  rpc UpdateUser(UpdateUserRequest) returns (UpdateUserResponse) {
+    option (google.api.http) = {
+      put: "/v1/user/{username}"
+    };
+  };
+}
+
+message GetUserRequest {
+  string username = 1 [(validate.rules).string = {
+    min_len: 3,
+    max_len: 50,
+    pattern: "^[a-zA-Z0-9_-]+$"
+  }];
+}
+
+message GetUserResponse {
+  string userId = 1;
+  string username = 2;;
+  string bio = 5;
+}
+
+message UpdateUserRequest {
+  string username = 1 [(validate.rules).string = {
+    min_len: 3,
+    max_len: 50,
+    pattern: "^[a-zA-Z0-9_-]+$"
+  }];
+  string bio = 4 [(validate.rules).string = {
+    max_len: 250
+  }];
+}
+
+message UpdateUserResponse {
+  bool success = 1;
+}

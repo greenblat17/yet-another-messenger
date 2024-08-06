@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: blue-service-chat
+  namespace: chat
+spec:
+  selector:
+    app: chat
+    version: blue
+  ports:
+  - protocol: TCP
+    port: 81
+    targetPort: 8081

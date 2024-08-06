@@ -1,0 +1,182 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "UserService service",
+    "version": "1.0",
+    "contact": {
+      "name": "gRPC-Gateway project",
+      "url": "https://github.com/grpc-ecosystem/grpc-gateway"
+    },
+    "license": {
+      "name": "BSD 3-Clause License",
+      "url": "https://github.com/grpc-ecosystem/grpc-gateway/blob/main/LICENSE"
+    }
+  },
+  "tags": [
+    {
+      "name": "UserService"
+    }
+  ],
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/v1/user/{username}": {
+      "get": {
+        "summary": "GetUser - Получить информацию о пользователе",
+        "operationId": "UserService_GetUser",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/userGetUserResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "username",
+            "description": "username - имя пользователя, информацию о котором необходимо получить",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "UserService"
+        ]
+      },
+      "put": {
+        "summary": "UpdateUser - Обновить информацию о пользователе",
+        "operationId": "UserService_UpdateUser",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/userUpdateUserResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "username",
+            "description": "username - имя пользователя",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "bio",
+            "description": "bio - биография пользователя",
+            "in": "query",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "UserService"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": {}
+    },
+    "rpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    },
+    "userGetUserResponse": {
+      "type": "object",
+      "example": {
+        "user_id": 1,
+        "username": "johndoe",
+        "bio": "developer"
+      },
+      "properties": {
+        "user_id": {
+          "type": "string",
+          "format": "int64",
+          "title": "user_id - уникальный идентификатор пользователя"
+        },
+        "username": {
+          "type": "string",
+          "title": "username - имя пользователя"
+        },
+        "bio": {
+          "type": "string",
+          "title": "bio - биография пользователя"
+        }
+      },
+      "description": "GetUserResponse - ответ на запрос получения информации о пользователе",
+      "title": "GetUserResponse",
+      "required": [
+        "user_id",
+        "username",
+        "bio"
+      ]
+    },
+    "userUpdateUserResponse": {
+      "type": "object",
+      "example": {
+        "success": true
+      },
+      "properties": {
+        "success": {
+          "type": "boolean",
+          "title": "success - успешность выполнения операции"
+        }
+      },
+      "description": "UpdateUserResponse - ответ на запрос обновления информации о пользователе",
+      "title": "UpdateUserResponse",
+      "required": [
+        "success"
+      ]
+    }
+  },
+  "externalDocs": {
+    "description": "More about gRPC-Gateway",
+    "url": "https://github.com/grpc-ecosystem/grpc-gateway"
+  }
+}

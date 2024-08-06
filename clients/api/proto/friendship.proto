@@ -1,0 +1,76 @@
+syntax = "proto3";
+
+package friendship;
+
+option go_package = "github.com/greenblat17/yet-another-messenger/pkg/grpc/friendship;friendship";
+
+import "google/protobuf/timestamp.proto";
+import "validate/validate.proto";
+import "google/api/annotations.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+
+service FriendshipService {
+  rpc SendFriendRequest(FriendRequest) returns (FriendResponse) {
+    option (google.api.http) = {
+      post: "/v1/friends/request"
+      body: "*"
+    };
+  }
+
+  rpc AcceptFriendRequest(FriendRequest) returns (FriendResponse) {
+    option (google.api.http) = {
+      post: "/v1/friends/accept"
+      body: "*"
+    };
+  }
+
+  rpc RejectFriendRequest(FriendRequest) returns (FriendResponse) {
+    option (google.api.http) = {
+      post: "/v1/friends/reject"
+      body: "*"
+    };
+  }
+
+  rpc RemoveFriend(RemoveFriendRequest) returns (RemoveFriendResponse) {
+    option (google.api.http) = {
+      delete: "/v1/friends/{userId}/{friendId}"
+    };
+  }
+
+  rpc GetFriends(GetFriendsRequest) returns (GetFriendsResponse) {
+    option (google.api.http) = {
+      get: "/v1/friends/{userId}"
+    };
+  }
+}
+
+message FriendRequest {
+  string userId = 1 [(validate.rules).string = {min_len: 1}];
+  string friendId = 2 [(validate.rules).string = {min_len: 1}];
+}
+
+message FriendResponse {
+  bool success = 1;
+}
+
+message RemoveFriendRequest {
+  string userId = 1 [(validate.rules).string = {min_len: 1}];
+  string friendId = 2 [(validate.rules).string = {min_len: 1}];
+}
+
+message RemoveFriendResponse {
+  bool success = 1;
+}
+
+message GetFriendsRequest {
+  string userId = 1 [(validate.rules).string = {min_len: 1}];
+}
+
+message GetFriendsResponse {
+  repeated Friend friends = 1;
+}
+
+message Friend {
+  string userId = 1;
+  string nickname = 2;
+}

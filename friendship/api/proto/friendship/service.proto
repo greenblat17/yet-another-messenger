@@ -1,0 +1,71 @@
+syntax = "proto3";
+
+package github.com.greenblat17.yarm.friendship;
+
+import "friendship/api/proto/friendship/messages.proto";
+import "google/api/annotations.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+
+option go_package = "github.com/greenblat17/yet-another-messenger/friendship/pkg/api/friendship;friendship";
+
+option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
+  info: {
+    title: "FriendshipService service";
+    version: "1.0";
+    contact: {
+      name: "gRPC-Gateway project";
+      url: "https://github.com/grpc-ecosystem/grpc-gateway";
+    };
+    license: {
+      name: "BSD 3-Clause License";
+      url: "https://github.com/grpc-ecosystem/grpc-gateway/blob/main/LICENSE";
+    };
+  };
+  external_docs: {
+    url: "https://github.com/grpc-ecosystem/grpc-gateway";
+    description: "More about gRPC-Gateway";
+  };
+  schemes: HTTP;
+  schemes: HTTPS;
+};
+
+// FriendshipService - friendship service
+service FriendshipService {
+  // SendFriendRequest  - send friend request to user
+  rpc SendFriendRequest(FriendRequest) returns (FriendResponse) {
+    option (google.api.http) = {
+      post: "/v1/friends/request"
+      body: "*"
+    };
+  }
+
+  // AcceptFriendRequest - accept friend request from user
+  rpc AcceptFriendRequest(FriendRequest) returns (FriendResponse) {
+    option (google.api.http) = {
+      post: "/v1/friends/accept"
+      body: "*"
+    };
+  }
+
+  // RejectFriendRequest - reject friend request from user
+  rpc RejectFriendRequest(FriendRequest) returns (FriendResponse) {
+    option (google.api.http) = {
+      post: "/v1/friends/reject"
+      body: "*"
+    };
+  }
+
+  // RemoveFriend - remove friend
+  rpc RemoveFriend(RemoveFriendRequest) returns (RemoveFriendResponse) {
+    option (google.api.http) = {
+      delete: "/v1/friends/{user_id}/{friend_id}"
+    };
+  }
+
+  // GetFriends - list of friends
+  rpc GetFriends(GetFriendsRequest) returns (GetFriendsResponse) {
+    option (google.api.http) = {
+      get: "/v1/friends/{user_id}"
+    };
+  }
+}

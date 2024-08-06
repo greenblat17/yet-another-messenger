@@ -1,0 +1,126 @@
+syntax = "proto3";
+
+package github.com.greenblat17.yarm.auth;
+
+import "buf/validate/validate.proto";
+import "google/api/field_behavior.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+
+option go_package = "github.com/greenblat17/yet-another-messenger/auth/pkg/api/auth;auth";
+
+// RegisterUserRequest - запрос на регистрацию пользователя
+message RegisterUserRequest {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema: {
+      title: "RegisterUserRequest"
+      description: "RegisterUserRequest - запрос на регистрацию пользователя"
+      required: ["email", "password"]
+      example: "{\"email\": \"example@gmail.com\", \"password\": \"123456\"}"
+    }
+  };
+
+  // email - почта пользователя
+  string email = 1 [
+    json_name = "email",
+    (google.api.field_behavior) = REQUIRED
+  ];
+  // password - пароль пользователя
+  string password = 2 [
+    json_name = "password",
+    (buf.validate.field).string.min_len = 1,
+    (buf.validate.field).string.max_len = 30
+  ];
+}
+
+// RegisterUserResponse - ответ на запрос на регистрацию пользователя
+message RegisterUserResponse {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema: {
+      title: "RegisterUserResponse"
+      description: "RegisterUserRequest - ответ на запрос на регистрацию пользователя"
+      required: ["userId"]
+      example: "{\"user_id\": 1}"
+    }
+  };
+
+  // user_id - идентификатор пользователя
+  int64 user_id = 1 [json_name = "user_id"];
+}
+
+// LoginUserRequest - запрос на вход
+message LoginUserRequest {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema: {
+      title: "LoginUserRequest"
+      description: "LoginUserRequest - запрос на вход"
+      required: ["email", "password"]
+      example: "{\"email\": \"example@gmail.com\", \"password\": \"123456\"}"
+    }
+  };
+
+  // email - почта пользователя
+  string email = 1 [
+    json_name = "email",
+    (google.api.field_behavior) = REQUIRED
+  ];
+  // password - пароль пользователя
+  string password = 2 [
+    json_name = "password",
+    (buf.validate.field).string.min_len = 1,
+    (buf.validate.field).string.max_len = 30
+  ];
+}
+
+
+// LoginUserResponse - ответ на запрос на вход
+message LoginUserResponse {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema: {
+      title: "LoginUserResponse"
+      description: "LoginUserResponse - ответ на запрос на вход"
+      required: ["token"]
+      example: "{\"token\": \"example_token_123\"}"
+    }
+  };
+
+  // token - токен доступа для аутентификации пользователя
+  string token = 1 [
+    json_name = "token",
+    (google.api.field_behavior) = REQUIRED
+  ];
+}
+
+// LogoutRequest - запрос на выход
+message LogoutRequest {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema: {
+      title: "LogoutRequest"
+      description: "LogoutRequest - запрос на выход пользователя"
+      required: ["token"]
+      example: "{\"token\": \"example_token_123\"}"
+    }
+  };
+
+  // token - токен пользователя для выхода
+  string token = 1 [
+    json_name = "token",
+    (google.api.field_behavior) = REQUIRED
+  ];
+}
+
+// LogoutResponse - ответ на запрос на выход
+message LogoutResponse {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema: {
+      title: "LogoutResponse"
+      description: "LogoutResponse - ответ на запрос на выход"
+      required: ["success"]
+      example: "{\"success\": true}"
+    }
+  };
+
+  // success - статус успешности выхода
+  bool success = 1 [
+    json_name = "success"
+  ];
+}

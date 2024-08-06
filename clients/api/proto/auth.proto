@@ -1,0 +1,59 @@
+syntax = "proto3";
+
+package auth;
+
+option go_package = "github.com/greenblat17/yet-another-messenger/pkg/grpc/auth;auth";
+
+import "google/protobuf/timestamp.proto";
+import "validate/validate.proto";
+import "google/api/annotations.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+
+service AuthService {
+  rpc RegisterUser (RegisterUserRequest) returns (RegisterUserResponse) {
+    option (google.api.http) = {
+      post: "/v1/register"
+      body: "*"
+    };
+  }
+
+  rpc LoginUser (LoginUserRequest) returns (LoginUserResponse) {
+    option (google.api.http) = {
+      post: "/v1/login"
+      body: "*"
+    };
+  }
+
+  rpc Logout (LogoutRequest) returns (LogoutResponse) {
+    option (google.api.http) = {
+      post: "/v1/logout"
+      body: "*"
+    };
+  }
+}
+
+message RegisterUserRequest {
+  string email = 1 [(validate.rules).string = {email: true}];
+  string password = 2 [(validate.rules).string = {min_len: 6}];
+}
+
+message RegisterUserResponse {
+  string userId = 1;
+}
+
+message LoginUserRequest {
+  string email = 1 [(validate.rules).string = {email: true}];
+  string password = 2 [(validate.rules).string = {min_len: 6}];
+}
+
+message LoginUserResponse {
+  string token = 1;
+}
+
+message LogoutRequest {
+  string token = 1 [(validate.rules).string = {min_len: 1}];
+}
+
+message LogoutResponse {
+  bool success = 1;
+}

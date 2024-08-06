@@ -1,0 +1,113 @@
+syntax = "proto3";
+
+package github.com.greenblat17.yarm.friendship;
+
+import "buf/validate/validate.proto";
+import "google/api/field_behavior.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+
+option go_package = "github.com/greenblat17/yet-another-messenger/friendship/pkg/api/friendship;friendship";
+
+// FriendRequest - запрос в друзья
+message FriendRequest {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema: {
+      title: "FriendRequest"
+      description: "FriendRequest - запрос в друзья"
+      required: ["user_id", "friend_id"]
+      example: "{\"user_id\": 1, \"friend_id\": 1}"
+    }
+    external_docs: {
+      url: "https://github.com/grpc-ecosystem/grpc-gateway";
+      description: "Find out more about ABitOfEverything";
+    }
+  };
+
+  // user_id - идентификатор пользователя
+  int64 user_id = 1 [
+    json_name = "user_id",
+    (buf.validate.field).int64.gt = 0
+  ];
+  // friend_id - идентификатор друга
+  int64 friend_id = 2 [
+    json_name = "friend_id",
+    (buf.validate.field).int64.gt = 0
+  ];
+}
+
+// FriendResponse - ответ от сервера о запросе в друзья
+message FriendResponse {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema: {
+      title: "FriendResponse"
+      description: "FriendResponse - ответ от сервера о запросе в друзья"
+      required: ["success"]
+    }
+    external_docs: {
+      url: "https://github.com/grpc-ecosystem/grpc-gateway";
+      description: "Find out more about ABitOfEverything";
+    }
+  };
+
+  // success - статус успешности выхода
+  bool success = 1;
+}
+
+// RemoveFriendRequest - запрос на удаление пользователя из друзей
+message RemoveFriendRequest {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema: {
+      title: "RemoveFriendRequest"
+      description: "RemoveFriendRequest - запрос на удаление пользователя из друзей"
+      required: ["user_id", "friend_id"]
+      example: "{\"user_id\": 1, \"friend_id\": 1}"
+    }
+    external_docs: {
+      url: "https://github.com/grpc-ecosystem/grpc-gateway";
+      description: "Find out more about ABitOfEverything";
+    }
+  };
+
+  // user_id - идентификатор пользователя
+  int64 user_id = 1 [
+    json_name = "user_id",
+    (buf.validate.field).int64.gt = 0
+  ];
+  // friend_id - идентификатор друга
+  int64 friend_id = 2 [
+    json_name = "friend_id",
+    (buf.validate.field).int64.gt = 0
+  ];
+}
+
+// RemoveFriendResponse - ответ на удаление пользоваетял из друзей
+message RemoveFriendResponse {
+  // success - статус успешности выхода
+  bool success = 1;
+}
+
+// GetFriendsRequest - запрос на приглашение друзья
+message GetFriendsRequest {
+  // user_id - идентификатор пользователя
+  int64 user_id = 1 [
+    json_name = "user_id",
+    (buf.validate.field).int64.gt = 0
+  ];
+}
+
+// GetFriendsResponse - ответ на приглашение в друзья
+message GetFriendsResponse {
+  // friends - список друзей/пользователей
+  repeated Friend friends = 1;
+}
+
+// Friend - информация о друге/пользователе
+message Friend {
+  // user_id - идентификатор пользователя
+  int64 user_id = 1 [
+    json_name = "user_id",
+    (buf.validate.field).int64.gt = 0
+  ];
+  // nickname - username пользователя
+  string nickname = 2 [json_name = "nickname"];
+}

@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: blue-deployment-notification
+  namespace: notification
+  labels:
+    app: notification
+    version: blue
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: notification
+      version: blue
+  template:
+    metadata:
+      labels:
+        app: notification
+        version: blue
+    spec:
+      containers:
+      - name: notification-service
+        image: docker.io/library/msa-notification-service:latest
+        imagePullPolicy: "Never" # for local in minikube
+        ports:
+        - containerPort: 8083
+        startupProbe:
+          httpGet:
+            path: /start-up
+            port: 8083
+          failureThreshold: 30
+          periodSeconds: 10
+        livenessProbe:
+          tcpSocket:
+            port: 8083
+          initialDelaySeconds: 15
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: 8083
+          initialDelaySeconds: 15
+          periodSeconds: 10

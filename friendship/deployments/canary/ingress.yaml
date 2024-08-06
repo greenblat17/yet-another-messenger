@@ -1,0 +1,17 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: friendship-ingress
+  namespace: friendship
+spec:
+  rules:
+  - host: messenger.friendship
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: friendship-service
+            port:
+              number: 82
