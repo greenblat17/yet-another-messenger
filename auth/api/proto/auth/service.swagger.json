@@ -1,0 +1,283 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "AuthService service",
+    "version": "1.0",
+    "contact": {
+      "name": "gRPC-Gateway project",
+      "url": "https://github.com/grpc-ecosystem/grpc-gateway"
+    },
+    "license": {
+      "name": "BSD 3-Clause License",
+      "url": "https://github.com/grpc-ecosystem/grpc-gateway/blob/main/LICENSE"
+    }
+  },
+  "tags": [
+    {
+      "name": "AuthService"
+    }
+  ],
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/v1/login": {
+      "post": {
+        "summary": "LoginUser - выполняет вход пользователя",
+        "operationId": "AuthService_LoginUser",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/authLoginUserResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "description": "LoginUserRequest - запрос на вход",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/authLoginUserRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AuthService"
+        ]
+      }
+    },
+    "/v1/logout": {
+      "post": {
+        "summary": "Logout - выполняет выход пользователя",
+        "operationId": "AuthService_Logout",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/authLogoutResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "description": "LogoutRequest - запрос на выход пользователя",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/authLogoutRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AuthService"
+        ]
+      }
+    },
+    "/v1/register": {
+      "post": {
+        "summary": "RegisterUser - регистрирует нового пользователя",
+        "operationId": "AuthService_RegisterUser",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/authRegisterUserResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "description": "RegisterUserRequest - запрос на регистрацию пользователя",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/authRegisterUserRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AuthService"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "authLoginUserRequest": {
+      "type": "object",
+      "example": {
+        "email": "example@gmail.com",
+        "password": "123456"
+      },
+      "properties": {
+        "email": {
+          "type": "string",
+          "title": "email - почта пользователя"
+        },
+        "password": {
+          "type": "string",
+          "title": "password - пароль пользователя"
+        }
+      },
+      "description": "LoginUserRequest - запрос на вход",
+      "title": "LoginUserRequest",
+      "required": [
+        "password",
+        "email"
+      ]
+    },
+    "authLoginUserResponse": {
+      "type": "object",
+      "example": {
+        "token": "example_token_123"
+      },
+      "properties": {
+        "token": {
+          "type": "string",
+          "title": "token - токен доступа для аутентификации пользователя"
+        }
+      },
+      "description": "LoginUserResponse - ответ на запрос на вход",
+      "title": "LoginUserResponse",
+      "required": [
+        "token"
+      ]
+    },
+    "authLogoutRequest": {
+      "type": "object",
+      "example": {
+        "token": "example_token_123"
+      },
+      "properties": {
+        "token": {
+          "type": "string",
+          "title": "token - токен пользователя для выхода"
+        }
+      },
+      "description": "LogoutRequest - запрос на выход пользователя",
+      "title": "LogoutRequest",
+      "required": [
+        "token"
+      ]
+    },
+    "authLogoutResponse": {
+      "type": "object",
+      "example": {
+        "success": true
+      },
+      "properties": {
+        "success": {
+          "type": "boolean",
+          "title": "success - статус успешности выхода"
+        }
+      },
+      "description": "LogoutResponse - ответ на запрос на выход",
+      "title": "LogoutResponse",
+      "required": [
+        "success"
+      ]
+    },
+    "authRegisterUserRequest": {
+      "type": "object",
+      "example": {
+        "email": "example@gmail.com",
+        "password": "123456"
+      },
+      "properties": {
+        "email": {
+          "type": "string",
+          "title": "email - почта пользователя"
+        },
+        "password": {
+          "type": "string",
+          "title": "password - пароль пользователя"
+        }
+      },
+      "description": "RegisterUserRequest - запрос на регистрацию пользователя",
+      "title": "RegisterUserRequest",
+      "required": [
+        "password",
+        "email"
+      ]
+    },
+    "authRegisterUserResponse": {
+      "type": "object",
+      "example": {
+        "user_id": 1
+      },
+      "properties": {
+        "user_id": {
+          "type": "string",
+          "format": "int64",
+          "title": "user_id - идентификатор пользователя"
+        }
+      },
+      "description": "RegisterUserRequest - ответ на запрос на регистрацию пользователя",
+      "title": "RegisterUserResponse",
+      "required": [
+        "userId"
+      ]
+    },
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": {}
+    },
+    "rpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    }
+  },
+  "externalDocs": {
+    "description": "More about gRPC-Gateway",
+    "url": "https://github.com/grpc-ecosystem/grpc-gateway"
+  }
+}

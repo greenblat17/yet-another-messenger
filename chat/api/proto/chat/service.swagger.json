@@ -1,0 +1,156 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "ChatService service",
+    "version": "1.0",
+    "contact": {
+      "name": "gRPC-Gateway project",
+      "url": "https://github.com/grpc-ecosystem/grpc-gateway"
+    },
+    "license": {
+      "name": "BSD 3-Clause License",
+      "url": "https://github.com/grpc-ecosystem/grpc-gateway/blob/main/LICENSE"
+    }
+  },
+  "tags": [
+    {
+      "name": "ChatService"
+    }
+  ],
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/v1/chat/{conversation_id}/history": {
+      "get": {
+        "summary": "GetChatHistory - get chat history",
+        "operationId": "ChatService_GetChatHistory",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/chatGetChatHistoryResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "conversation_id",
+            "description": "conversation_id - идентификатор диалога",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "ChatService"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "chatChatMessage": {
+      "type": "object",
+      "example": {
+        "conversation_id": 1,
+        "sender_id": 1,
+        "text": "hello world"
+      },
+      "properties": {
+        "conversation_id": {
+          "type": "string",
+          "format": "int64",
+          "title": "conversation_id - идентификатор диалога"
+        },
+        "sender_id": {
+          "type": "string",
+          "format": "int64",
+          "title": "sender_id - идентификатор отправителя сообщения"
+        },
+        "text": {
+          "type": "string",
+          "title": "text - текст сообщения"
+        }
+      },
+      "description": "ChatMessage - сообщение в чате",
+      "title": "ChatMessage",
+      "externalDocs": {
+        "description": "Find out more about ABitOfEverything",
+        "url": "https://github.com/grpc-ecosystem/grpc-gateway"
+      },
+      "required": [
+        "conversation_id",
+        "sender_id",
+        "text"
+      ]
+    },
+    "chatGetChatHistoryResponse": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/chatChatMessage"
+          },
+          "title": "messages - история сообщений в диалоге"
+        }
+      },
+      "description": "GetChatHistoryResponse - история сообщений",
+      "title": "GetChatHistoryResponse",
+      "externalDocs": {
+        "description": "Find out more about ABitOfEverything",
+        "url": "https://github.com/grpc-ecosystem/grpc-gateway"
+      },
+      "required": [
+        "message"
+      ]
+    },
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": {}
+    },
+    "rpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    }
+  },
+  "externalDocs": {
+    "description": "More about gRPC-Gateway",
+    "url": "https://github.com/grpc-ecosystem/grpc-gateway"
+  }
+}

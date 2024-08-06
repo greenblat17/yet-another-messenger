@@ -1,0 +1,58 @@
+syntax = "proto3";
+
+package github.com.greenblat17.yarm.auth;
+
+import "auth/api/proto/auth/messages.proto";
+import "google/api/annotations.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+
+option go_package = "github.com/greenblat17/yet-another-messenger/auth/pkg/api/auth;auth";
+
+option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
+  info: {
+    title: "AuthService service";
+    version: "1.0";
+    contact: {
+      name: "gRPC-Gateway project";
+      url: "https://github.com/grpc-ecosystem/grpc-gateway";
+    };
+    license: {
+      name: "BSD 3-Clause License";
+      url: "https://github.com/grpc-ecosystem/grpc-gateway/blob/main/LICENSE";
+    };
+  };
+  external_docs: {
+    url: "https://github.com/grpc-ecosystem/grpc-gateway";
+    description: "More about gRPC-Gateway";
+  };
+  schemes: HTTP;
+  schemes: HTTPS;
+};
+
+// AuthService - сервис для аутентификации пользователей
+service AuthService {
+
+  // RegisterUser - регистрирует нового пользователя
+  rpc RegisterUser (RegisterUserRequest) returns (RegisterUserResponse) {
+    option (google.api.http) = {
+      post: "/v1/register"
+      body: "*"
+    };
+  }
+
+  // LoginUser - выполняет вход пользователя
+  rpc LoginUser (LoginUserRequest) returns (LoginUserResponse) {
+    option (google.api.http) = {
+      post: "/v1/login"
+      body: "*"
+    };
+  }
+
+  // Logout - выполняет выход пользователя
+  rpc Logout (LogoutRequest) returns (LogoutResponse) {
+    option (google.api.http) = {
+      post: "/v1/logout"
+      body: "*"
+    };
+  }
+}

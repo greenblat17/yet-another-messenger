@@ -1,0 +1,43 @@
+syntax = "proto3";
+
+package github.com.greenblat17.yarm.chat;
+
+import "chat/api/proto/chat/messages.proto";
+import "google/api/annotations.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+
+option go_package = "github.com/greenblat17/yet-another-messenger/pkg/api/chat;chat";
+
+option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
+  info: {
+    title: "ChatService service";
+    version: "1.0";
+    contact: {
+      name: "gRPC-Gateway project";
+      url: "https://github.com/grpc-ecosystem/grpc-gateway";
+    };
+    license: {
+      name: "BSD 3-Clause License";
+      url: "https://github.com/grpc-ecosystem/grpc-gateway/blob/main/LICENSE";
+    };
+  };
+  external_docs: {
+    url: "https://github.com/grpc-ecosystem/grpc-gateway";
+    description: "More about gRPC-Gateway";
+  };
+  schemes: HTTP;
+  schemes: HTTPS;
+};
+
+// ChatService - chat service
+service ChatService {
+  // SendMessage - send message
+  rpc SendMessage(stream ChatMessage) returns (stream ChatMessage);
+
+  // GetChatHistory - get chat history
+  rpc GetChatHistory(GetChatHistoryRequest) returns (GetChatHistoryResponse) {
+    option (google.api.http) = {
+      get: "/v1/chat/{conversation_id}/history"
+    };
+  }
+}

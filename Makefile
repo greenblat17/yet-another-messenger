@@ -1,114 +1,160 @@
 LOCAL_BIN:=$(CURDIR)/bin
 
 PROTOC := PATH="$$PATH:$(LOCAL_BIN)" protoc
-AUTH_PROTO_PATH := auth/api/proto
-USER_PROTO_PATH := user/api/proto
-FRIENDSHIP_PROTO_PATH := friendship/api/proto
-CHAT_PROTO_PATH := chat/api/proto
-CLIENTS_PROTO_PATH := clients/api/proto
-VENDOR_PROTO_DIR := vendor.proto
+
+# Путь до завендореных protobuf файлов
+VENDOR_PROTO_PATH := $(CURDIR)/vendor.protobuf
+
+# Путь до protobuf файлов
+AUTH_PROTO_PATH := $(CURDIR)/auth/api/proto/auth
+USER_PROTO_PATH := $(CURDIR)/user/api/proto/user
+FRIENDSHIP_PROTO_PATH := $(CURDIR)/friendship/api/proto/friendship
+CHAT_PROTO_PATH := $(CURDIR)/chat/api/proto/chat
+
+CLIENTS_AUTH_PROTO_PATH := $(CURDIR)/clients/api/proto/auth
+
+# Путь до сгенеренных .pb.go файлов
+CHAT_PKG_PROTO_PATH := $(CURDIR)/chat/pkg
+AUTH_PKG_PROTO_PATH := $(CURDIR)/auth/pkg
+USER_PKG_PROTO_PATH := $(CURDIR)/user/pkg
+FRIENDSHIP_PKG_PROTO_PATH := $(CURDIR)/friendship/pkg
 
 # Установка всех необходимых зависимостей
-.PHONY: .bin-deps
+.bin-deps: export GOBIN := $(LOCAL_BIN)
 .bin-deps:
 	$(info Installing binary dependencies...)
-	GOBIN=$(LOCAL_BIN) go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.34.2
-	GOBIN=$(LOCAL_BIN) go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.4.0
-	GOBIN=$(LOCAL_BIN) go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-grpc-gateway@v2.20.0
-	GOBIN=$(LOCAL_BIN) go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2@v2.20.0
-	GOBIN=$(LOCAL_BIN) go install github.com/envoyproxy/protoc-gen-validate@v1.0.4
 
+	go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.34.2
+	go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.4.0
+	go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-grpc-gateway@v2.20.0
+	go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2@v2.20.0
+	go install github.com/bufbuild/buf/cmd/buf@v1.32.2
+	go install github.com/yoheimuta/protolint/cmd/protolint@latest
 
 # Вендоринг внешних proto файлов
-.vendor-proto: $(VENDOR_PROTO_DIR)/google/protobuf $(VENDOR_PROTO_DIR)/google/api $(VENDOR_PROTO_DIR)/validate $(VENDOR_PROTO_DIR)/protoc-gen-openapiv2/options
+vendor:	.vendor-reset .vendor-googleapis .vendor-google-protobuf .vendor-protovalidate .vendor-protoc-gen-openapiv2 .vendor-tidy
 
-vendor.proto/protoc-gen-openapiv2/options:
-	rm -rf $(VENDOR_PROTO_DIR)/grpc-ecosystem
+.vendor-reset:
+	rm -rf $(VENDOR_PROTO_PATH)
+	mkdir -p $(VENDOR_PROTO_PATH)
+
+.vendor-tidy:
+	find $(VENDOR_PROTO_PATH) -type f ! -name "*.proto" -delete
+	find $(VENDOR_PROTO_PATH) -empty -type d -delete
+
+# Устанавливаем proto описания google/protobuf
+.vendor-google-protobuf:
+	git clone -b main --single-branch -n --depth=1 --filter=tree:0 \
+		https://github.com/protocolbuffers/protobuf $(VENDOR_PROTO_PATH)/protobuf &&\
+	cd $(VENDOR_PROTO_PATH)/protobuf &&\
+	git sparse-checkout set --no-cone src/google/protobuf &&\
+	git checkout
+	mkdir -p $(VENDOR_PROTO_PATH)/google
+	mv $(VENDOR_PROTO_PATH)/protobuf/src/google/protobuf $(VENDOR_PROTO_PATH)/google
+	rm -rf $(VENDOR_PROTO_PATH)/protobuf
+
+# Устанавливаем proto описания validate
+.vendor-protovalidate:
 	git clone -b main --single-branch --depth=1 --filter=tree:0 \
-		https://github.com/grpc-ecosystem/grpc-gateway $(VENDOR_PROTO_DIR)/grpc-ecosystem
-	cd $(VENDOR_PROTO_DIR)/grpc-ecosystem && \
-		git sparse-checkout set --no-cone protoc-gen-openapiv2/options && \
-		git checkout main
-	mkdir -p $(VENDOR_PROTO_DIR)/protoc-gen-openapiv2
-	mv $(VENDOR_PROTO_DIR)/grpc-ecosystem/protoc-gen-openapiv2/options $(VENDOR_PROTO_DIR)/protoc-gen-openapiv2
-	rm -rf $(VENDOR_PROTO_DIR)/grpc-ecosystem
+		https://github.com/bufbuild/protovalidate $(VENDOR_PROTO_PATH)/protovalidate && \
+	cd $(VENDOR_PROTO_PATH)/protovalidate
+	git checkout
+	mv $(VENDOR_PROTO_PATH)/protovalidate/proto/protovalidate/buf $(VENDOR_PROTO_PATH)
+	rm -rf $(VENDOR_PROTO_PATH)/protovalidate
 
-vendor.proto/google/protobuf:
-	rm -rf $(VENDOR_PROTO_DIR)/protobuf
-	git clone -b main --single-branch --depth=1 --filter=tree:0 \
-		https://github.com/protocolbuffers/protobuf $(VENDOR_PROTO_DIR)/protobuf
-	cd $(VENDOR_PROTO_DIR)/protobuf && \
-		git sparse-checkout set --no-cone src/google/protobuf && \
-		git checkout main
-	mkdir -p $(VENDOR_PROTO_DIR)/google
-	mv $(VENDOR_PROTO_DIR)/protobuf/src/google/protobuf $(VENDOR_PROTO_DIR)/google
-	rm -rf $(VENDOR_PROTO_DIR)/protobuf
+# Устанавливаем proto описания google/api
+.vendor-googleapis:
+	git clone -b master --single-branch -n --depth=1 --filter=tree:0 \
+		https://github.com/googleapis/googleapis $(VENDOR_PROTO_PATH)/googleapis &&\
+	cd $(VENDOR_PROTO_PATH)/googleapis &&\
+	git checkout
+	mv $(VENDOR_PROTO_PATH)/googleapis/google $(VENDOR_PROTO_PATH)
+	rm -rf $(VENDOR_PROTO_PATH)/googleapis
 
-vendor.proto/google/api:
-	rm -rf $(VENDOR_PROTO_DIR)/googleapis
-	git clone -b master --single-branch --depth=1 --filter=tree:0 \
-		https://github.com/googleapis/googleapis $(VENDOR_PROTO_DIR)/googleapis
-	cd $(VENDOR_PROTO_DIR)/googleapis && \
-		git sparse-checkout set --no-cone google/api && \
-		git checkout master
-	mkdir -p $(VENDOR_PROTO_DIR)/google
-	mv $(VENDOR_PROTO_DIR)/googleapis/google/api $(VENDOR_PROTO_DIR)/google
-	rm -rf $(VENDOR_PROTO_DIR)/googleapis
+# Устанавливаем proto описания protoc-gen-openapiv2/options
+.vendor-protoc-gen-openapiv2:
+	git clone -b main --single-branch -n --depth=1 --filter=tree:0 \
+ 		https://github.com/grpc-ecosystem/grpc-gateway $(VENDOR_PROTO_PATH)/grpc-gateway && \
+ 	cd $(VENDOR_PROTO_PATH)/grpc-gateway && \
+	git sparse-checkout set --no-cone protoc-gen-openapiv2/options && \
+	git checkout
+	mkdir -p $(VENDOR_PROTO_PATH)/protoc-gen-openapiv2
+	mv $(VENDOR_PROTO_PATH)/grpc-gateway/protoc-gen-openapiv2/options $(VENDOR_PROTO_PATH)/protoc-gen-openapiv2
+	rm -rf $(VENDOR_PROTO_PATH)/grpc-gateway
 
-vendor.proto/validate:
-	rm -rf $(VENDOR_PROTO_DIR)/tmp
-	git clone -b main --single-branch --depth=2 --filter=tree:0 \
-		https://github.com/bufbuild/protoc-gen-validate $(VENDOR_PROTO_DIR)/tmp
-	cd $(VENDOR_PROTO_DIR)/tmp && \
-		git sparse-checkout set --no-cone validate && \
-		git checkout main
-	mkdir -p $(VENDOR_PROTO_DIR)/validate
-	mv $(VENDOR_PROTO_DIR)/tmp/validate $(VENDOR_PROTO_DIR)/
-	rm -rf $(VENDOR_PROTO_DIR)/tmp
-
-
-# Генерация proto файлов
-
-define generate_proto
-	mkdir -p $3/pkg/$1/$2
-	$(PROTOC) \
-  	-I $1 \
-	-I $(VENDOR_PROTO_DIR) \
-	$1/$2.proto \
-	--plugin=protoc-gen-go=$(LOCAL_BIN)/protoc-gen-go --go_out=./$3/pkg/$1/$2 --go_opt=paths=source_relative \
- 	--plugin=protoc-gen-go-grpc=$(LOCAL_BIN)/protoc-gen-go-grpc --go-grpc_out=./$3/pkg/$1/$2 --go-grpc_opt=paths=source_relative \
- 	--plugin=protoc-gen-grpc-gateway=$(LOCAL_BIN)/protoc-gen-grpc-gateway --grpc-gateway_out=./$3/pkg/$1/$2 --grpc-gateway_opt=paths=source_relative,generate_unbound_methods=true \
- 	--plugin=protoc-gen-openapiv2=$(LOCAL_BIN)/protoc-gen-openapiv2 --openapiv2_out=./$3/pkg/$1/$2 \
-  	--plugin=protoc-gen-validate=$(LOCAL_BIN)/protoc-gen-validate --validate_out="lang=go,paths=source_relative:$3/pkg/$1/$2"
+# генерация .go файлов с помощью protoc
+define protoc-generate
+	mkdir -p $1
+	$(PROTOC) -I $(VENDOR_PROTO_PATH) --proto_path=$(CURDIR) \
+	--go_out=$1 --go_opt paths=source_relative \
+	--go-grpc_out=$1 --go-grpc_opt paths=source_relative \
+	--grpc-gateway_out=$1 --grpc-gateway_opt paths=source_relative --grpc-gateway_opt generate_unbound_methods=true \
+	--openapiv2_out=. --openapiv2_opt logtostderr=true \
+	$2/messages.proto $2/service.proto
 endef
 
-
-
 .PHONY: generate-auth
-generate-auth: .bin-deps .vendor-proto
-	$(call generate_proto,$(AUTH_PROTO_PATH),auth,auth)
+generate-auth: .bin-deps
+	$(call protoc-generate,$(AUTH_PKG_PROTO_PATH),$(AUTH_PROTO_PATH))
 
 .PHONY: generate-user
-generate-user: .bin-deps .vendor-proto
-	$(call generate_proto,$(USER_PROTO_PATH),user,user)
+generate-user: .bin-deps
+	$(call protoc-generate,$(USER_PKG_PROTO_PATH),$(USER_PROTO_PATH))
 
 .PHONY: generate-friendship
-generate-friendship: .bin-deps .vendor-proto
-	$(call generate_proto,$(FRIENDSHIP_PROTO_PATH),friendship,friendship)
+generate-friendship: .bin-deps
+	$(call protoc-generate,$(FRIENDSHIP_PKG_PROTO_PATH),$(FRIENDSHIP_PROTO_PATH))
 
 .PHONY: generate-chat
-generate-chat: .bin-deps .vendor-proto
-	$(call generate_proto,$(CHAT_PROTO_PATH),chat,chat)
+generate-chat: .bin-deps
+	$(call protoc-generate,$(CHAT_PKG_PROTO_PATH),$(CHAT_PROTO_PATH))
 
 .PHONY: generate-all
 generate-all: generate-auth generate-user generate-friendship generate-chat
 
-.PHONY: generate-clients
-generate-clients: .bin-deps .vendor-proto
-	$(call generate_proto,$(CLIENTS_PROTO_PATH),auth,clients)
-	$(call generate_proto,$(CLIENTS_PROTO_PATH),user,clients)
-	$(call generate_proto,$(CLIENTS_PROTO_PATH),friendship,clients)
-	$(call generate_proto,$(CLIENTS_PROTO_PATH),chat,clients)
+#.PHONY: generate-clients
+#generate-clients: .bin-deps
+#	$(call protoc-generate,$(CLIENTS_PROTO_PATH),auth,clients)
+#	$(call generate_proto,$(CLIENTS_PROTO_PATH),user,clients)
+#	$(call generate_proto,$(CLIENTS_PROTO_PATH),friendship,clients)
+#	$(call generate_proto,$(CLIENTS_PROTO_PATH),chat,clients)
+
+# Генерация .pb файлов с помощью buf
+.buf-generate:
+	$(info run buf generate...)
+	PATH="$(LOCAL_BIN):$(PATH)" $(LOCAL_BIN)/buf generate
+
+# Генерация кода из protobuf
+generate: .bin-deps .buf-generate proto-format
+
+# Форматирование protobuf файлов
+proto-format:
+	$(info run buf format...)
+	$(LOCAL_BIN)/buf format -w
+
+# Линтер
+lint:
+	$(call proto-lint,$(AUTH_PROTO_PATH))
+	$(call proto-lint,$(USER_PROTO_PATH))
+	$(call proto-lint,$(CHAT_PROTO_PATH))
+	$(call proto-lint,$(FRIENDSHIP_PROTO_PATH))
+
+# Линтер proto файлов
+define proto-lint
+	$(LOCAL_BIN)/protolint -config_path ./.protolint.yaml $1
+endef
+
+
+.PHONY: \
+	.bin-deps \
+	.protoc-generate \
+	.buf-generate \
+	.tidy \
+	.vendor-protovalidate \
+	.proto-lint \
+	proto-format \
+	vendor \
+	lint
 
 .PHONY: build up down
 

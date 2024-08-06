@@ -1,3 +1,4 @@
 .idea/
 bin
-vendor.proto/
+vendor.protobuf/
+.DS_Store

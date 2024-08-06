@@ -1,0 +1,81 @@
+syntax = "proto3";
+
+package github.com.greenblat17.yarm.chat;
+
+import "buf/validate/validate.proto";
+import "google/api/field_behavior.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+
+option go_package = "github.com/greenblat17/yet-another-messenger/pkg/api/chat;chat";
+
+// ChatMessage - сообщение в чате
+message ChatMessage {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema: {
+      title: "ChatMessage"
+      description: "ChatMessage - сообщение в чате"
+      required: ["conversation_id", "sender_id", "text"]
+      example: "{\"conversation_id\": 1, \"sender_id\": 1, \"text\": \"hello world\"}"
+    }
+    external_docs: {
+      url: "https://github.com/grpc-ecosystem/grpc-gateway";
+      description: "Find out more about ABitOfEverything";
+    }
+  };
+
+  // conversation_id - идентификатор диалога
+  int64 conversation_id = 1 [
+    json_name = "conversation_id",
+    (buf.validate.field).int64.gt = 0
+  ];
+  // sender_id - идентификатор отправителя сообщения
+  int64 sender_id = 2 [
+    json_name = "sender_id",
+    (buf.validate.field).int64.gt = 0
+  ];
+  // text - текст сообщения
+  string text = 3 [
+    json_name = "text",
+    (buf.validate.field).string.min_len = 1
+  ];
+}
+
+// GetChatHistoryRequest - история сообщений
+message GetChatHistoryRequest {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema: {
+      title: "GetChatHistoryRequest"
+      description: "GetChatHistoryRequest - история сообщений"
+      required: ["conversation_id"]
+      example: "{\"conversation_id\": 1}"
+    }
+    external_docs: {
+      url: "https://github.com/grpc-ecosystem/grpc-gateway";
+      description: "Find out more about ABitOfEverything";
+    }
+  };
+
+  // conversation_id - идентификатор диалога
+  int64 conversation_id = 1 [
+    json_name = "conversation_id",
+    (buf.validate.field).int64.gt = 0
+  ];
+}
+
+// GetChatHistoryResponse - история сообщений
+message GetChatHistoryResponse {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema: {
+      title: "GetChatHistoryResponse"
+      description: "GetChatHistoryResponse - история сообщений"
+      required: ["messages"]
+    }
+    external_docs: {
+      url: "https://github.com/grpc-ecosystem/grpc-gateway";
+      description: "Find out more about ABitOfEverything";
+    }
+  };
+
+  // messages - история сообщений в диалоге
+  repeated ChatMessage messages = 1 [json_name = "message"];
+}

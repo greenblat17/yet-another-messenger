@@ -1,0 +1,328 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "FriendshipService service",
+    "version": "1.0",
+    "contact": {
+      "name": "gRPC-Gateway project",
+      "url": "https://github.com/grpc-ecosystem/grpc-gateway"
+    },
+    "license": {
+      "name": "BSD 3-Clause License",
+      "url": "https://github.com/grpc-ecosystem/grpc-gateway/blob/main/LICENSE"
+    }
+  },
+  "tags": [
+    {
+      "name": "FriendshipService"
+    }
+  ],
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/v1/friends/accept": {
+      "post": {
+        "summary": "AcceptFriendRequest - accept friend request from user",
+        "operationId": "FriendshipService_AcceptFriendRequest",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/friendshipFriendResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "description": "FriendRequest - запрос в друзья",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/friendshipFriendRequest"
+            }
+          }
+        ],
+        "tags": [
+          "FriendshipService"
+        ]
+      }
+    },
+    "/v1/friends/reject": {
+      "post": {
+        "summary": "RejectFriendRequest - reject friend request from user",
+        "operationId": "FriendshipService_RejectFriendRequest",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/friendshipFriendResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "description": "FriendRequest - запрос в друзья",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/friendshipFriendRequest"
+            }
+          }
+        ],
+        "tags": [
+          "FriendshipService"
+        ]
+      }
+    },
+    "/v1/friends/request": {
+      "post": {
+        "summary": "SendFriendRequest  - send friend request to user",
+        "operationId": "FriendshipService_SendFriendRequest",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/friendshipFriendResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "description": "FriendRequest - запрос в друзья",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/friendshipFriendRequest"
+            }
+          }
+        ],
+        "tags": [
+          "FriendshipService"
+        ]
+      }
+    },
+    "/v1/friends/{user_id}": {
+      "get": {
+        "summary": "GetFriends - list of friends",
+        "operationId": "FriendshipService_GetFriends",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/friendshipGetFriendsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "user_id",
+            "description": "user_id - идентификатор пользователя",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "FriendshipService"
+        ]
+      }
+    },
+    "/v1/friends/{user_id}/{friend_id}": {
+      "delete": {
+        "summary": "RemoveFriend - remove friend",
+        "operationId": "FriendshipService_RemoveFriend",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/friendshipRemoveFriendResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "user_id",
+            "description": "user_id - идентификатор пользователя",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "int64"
+          },
+          {
+            "name": "friend_id",
+            "description": "friend_id - идентификатор друга",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "FriendshipService"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "friendshipFriend": {
+      "type": "object",
+      "properties": {
+        "user_id": {
+          "type": "string",
+          "format": "int64",
+          "title": "user_id - идентификатор пользователя"
+        },
+        "nickname": {
+          "type": "string",
+          "title": "nickname - username пользователя"
+        }
+      },
+      "title": "Friend - информация о друге/пользователе"
+    },
+    "friendshipFriendRequest": {
+      "type": "object",
+      "example": {
+        "user_id": 1,
+        "friend_id": 1
+      },
+      "properties": {
+        "user_id": {
+          "type": "string",
+          "format": "int64",
+          "title": "user_id - идентификатор пользователя"
+        },
+        "friend_id": {
+          "type": "string",
+          "format": "int64",
+          "title": "friend_id - идентификатор друга"
+        }
+      },
+      "description": "FriendRequest - запрос в друзья",
+      "title": "FriendRequest",
+      "externalDocs": {
+        "description": "Find out more about ABitOfEverything",
+        "url": "https://github.com/grpc-ecosystem/grpc-gateway"
+      },
+      "required": [
+        "user_id",
+        "friend_id"
+      ]
+    },
+    "friendshipFriendResponse": {
+      "type": "object",
+      "properties": {
+        "success": {
+          "type": "boolean",
+          "title": "success - статус успешности выхода"
+        }
+      },
+      "description": "FriendResponse - ответ от сервера о запросе в друзья",
+      "title": "FriendResponse",
+      "externalDocs": {
+        "description": "Find out more about ABitOfEverything",
+        "url": "https://github.com/grpc-ecosystem/grpc-gateway"
+      },
+      "required": [
+        "success"
+      ]
+    },
+    "friendshipGetFriendsResponse": {
+      "type": "object",
+      "properties": {
+        "friends": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/friendshipFriend"
+          },
+          "title": "friends - список друзей/пользователей"
+        }
+      },
+      "title": "GetFriendsResponse - ответ на приглашение в друзья"
+    },
+    "friendshipRemoveFriendResponse": {
+      "type": "object",
+      "properties": {
+        "success": {
+          "type": "boolean",
+          "title": "success - статус успешности выхода"
+        }
+      },
+      "title": "RemoveFriendResponse - ответ на удаление пользоваетял из друзей"
+    },
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": {}
+    },
+    "rpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    }
+  },
+  "externalDocs": {
+    "description": "More about gRPC-Gateway",
+    "url": "https://github.com/grpc-ecosystem/grpc-gateway"
+  }
+}

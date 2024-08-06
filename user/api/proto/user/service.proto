@@ -1,0 +1,47 @@
+syntax = "proto3";
+
+package github.com.greenblat17.yarm.user;
+
+import "google/api/annotations.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+import "user/api/proto/user/messages.proto";
+
+option go_package = "github.com/greenblat17/yet-another-messenger/user/pkg/api/user;user";
+
+option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
+  info: {
+    title: "UserService service";
+    version: "1.0";
+    contact: {
+      name: "gRPC-Gateway project";
+      url: "https://github.com/grpc-ecosystem/grpc-gateway";
+    };
+    license: {
+      name: "BSD 3-Clause License";
+      url: "https://github.com/grpc-ecosystem/grpc-gateway/blob/main/LICENSE";
+    };
+  };
+  external_docs: {
+    url: "https://github.com/grpc-ecosystem/grpc-gateway";
+    description: "More about gRPC-Gateway";
+  };
+  schemes: HTTP;
+  schemes: HTTPS;
+};
+
+// UserService - сервис получения информации о пользователе
+service UserService {
+  // GetUser - Получить информацию о пользователе
+  rpc GetUser(GetUserRequest) returns (GetUserResponse) {
+    option (google.api.http) = {
+      get: "/v1/user/{username}"
+    };
+  };
+
+  // UpdateUser - Обновить информацию о пользователе
+  rpc UpdateUser(UpdateUserRequest) returns (UpdateUserResponse) {
+    option (google.api.http) = {
+      put: "/v1/user/{username}"
+    };
+  };
+}

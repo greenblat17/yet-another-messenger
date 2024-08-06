@@ -1,0 +1,84 @@
+syntax = "proto3";
+
+package github.com.greenblat17.yarm.user;
+
+import "buf/validate/validate.proto";
+import "google/api/field_behavior.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+
+option go_package = "github.com/greenblat17/yet-another-messenger/user/pkg/api/user;user";
+
+// GetUserRequest - запрос на получение информации о пользователе
+message GetUserRequest {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema: {
+      title: "GetUserRequest"
+      description: "GetUserRequest - запрос на получение информации о пользователе"
+      required: ["username"]
+      example: "{\"username\": \"johndoe\"}"
+    }
+  };
+
+  // username - имя пользователя, информацию о котором необходимо получить
+  string username = 1 [
+    json_name = "username",
+    (google.api.field_behavior) = REQUIRED
+  ];
+}
+
+// GetUserResponse - ответ на запрос получения информации о пользователе
+message GetUserResponse {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema: {
+      title: "GetUserResponse"
+      description: "GetUserResponse - ответ на запрос получения информации о пользователе"
+      required: ["user_id", "username", "bio"]
+      example: "{\"user_id\": 1, \"username\": \"johndoe\", \"bio\": \"developer\"}"
+    }
+  };
+
+  // user_id - уникальный идентификатор пользователя
+  int64 user_id = 1 [json_name = "user_id"];
+  // username - имя пользователя
+  string username = 2 [json_name = "username"];
+  // bio - биография пользователя
+  string bio = 5 [json_name = "bio"];
+}
+
+// UpdateUserRequest - запрос на обновление информации о пользователе
+message UpdateUserRequest {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema: {
+      title: "UpdateUserRequest"
+      description: "UpdateUserRequest - запрос на обновление информации о пользователе"
+      required: ["username", "bio"]
+      example: "{\"username\": \"johndoe\", \"bio\": \"developer\"}"
+    }
+  };
+
+  // username - имя пользователя
+  string username = 1 [
+    json_name = "username",
+    (google.api.field_behavior) = REQUIRED
+  ];
+  // bio - биография пользователя
+  string bio = 4 [
+    json_name = "bio",
+    (google.api.field_behavior) = REQUIRED
+  ];
+}
+
+// UpdateUserResponse - ответ на запрос обновления информации о пользователе
+message UpdateUserResponse {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema: {
+      title: "UpdateUserResponse"
+      description: "UpdateUserResponse - ответ на запрос обновления информации о пользователе"
+      required: ["success"]
+      example: "{\"success\": true}"
+    }
+  };
+
+  // success - успешность выполнения операции
+  bool success = 1 [json_name = "success"];
+}
