@@ -1,39 +1,58 @@
 package main
 
 import (
+	"flag"
 	"fmt"
-	"net/http"
 	"os"
+	"sync"
 
-	"github.com/sirupsen/logrus"
+	"github.com/greenblat17/yet-another-messenger/chat/internal/api/http"
+	"github.com/greenblat17/yet-another-messenger/chat/internal/grpc"
 )
 
 func main() {
-	logrus.Info("Starting server...")
-
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintln(w, "Hello from Chat Service")
-	})
-
-	http.HandleFunc("/live", func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusOK)
-		fmt.Fprintln(w, "Chat Service is alive")
-	})
-
-	http.HandleFunc("/ready", func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusOK)
-		fmt.Fprintln(w, "Chat Service is ready")
-	})
-
-	http.HandleFunc("/start-up", func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusOK)
-		fmt.Fprintln(w, "Chat Service is start up")
-	})
-
-	port, ok := os.LookupEnv("CHAT_PORT")
+	httpPort, ok := os.LookupEnv("CHAT_HTTP_PORT")
 	if !ok {
-		port = "8083"
+		httpPort = "8083"
 	}
 
-	http.ListenAndServe(fmt.Sprintf(":%s", port), nil)
+	wsPort, ok := os.LookupEnv("CHAT_GRPC_PORT")
+	if !ok {
+		wsPort = "8090"
+	}
+
+	grpcPort, ok := os.LookupEnv("CHAT_WS_PORT")
+	if !ok {
+		grpcPort = "50053"
+	}
+
+	probeHandler := http.NewProbeHandler()
+	portConfig := grpc.NewPortConfig(grpcPort, httpPort, wsPort)
+	grpcServerEndpoint := flag.String(
+		"grpc-endpoint",
+		fmt.Sprintf("localhost:%s", portConfig.GRPCPort()),
+		"gRPC endpoint",
+	)
+
+	server := grpc.NewGRPCServer(probeHandler, portConfig, grpcServerEndpoint)
+
+	wg := sync.WaitGroup{}
+	wg.Add(3)
+
+	go func() {
+		defer wg.Done()
+		server.RunGRPCServer()
+	}()
+
+	go func() {
+		defer wg.Done()
+		server.RunHTTPProxyServer()
+	}()
+
+	go func() {
+		defer wg.Done()
+		server.RunWebSocketProxyServer()
+	}()
+
+	wg.Wait()
 }

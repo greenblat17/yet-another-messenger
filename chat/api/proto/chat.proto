@@ -1,0 +1,42 @@
+syntax = "proto3";
+
+package chat;
+
+option go_package = "github.com/greenblat17/yet-another-messenger/pkg/grpc/chat;chat";
+
+import "google/protobuf/timestamp.proto";
+import "validate/validate.proto";
+import "google/api/annotations.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+
+service ChatService {
+    rpc SendMessage(stream ChatMessage) returns (stream ChatMessage){
+      option (google.api.http) = {
+        get: "/v1/chat/send-message"
+      };
+    };
+
+    rpc GetChatHistory(GetChatHistoryRequest) returns (GetChatHistoryResponse) {
+      option (google.api.http) = {
+        get: "/v1/chat/{conversationId}/history"
+      };
+    }
+}
+
+message ChatMessage {
+    string conversationId = 1 [(validate.rules).string = {min_len: 1}];
+    string senderId = 2 [(validate.rules).string = {min_len: 1}];
+    string text = 3 [(validate.rules).string = {min_len: 1}];
+    google.protobuf.Timestamp timestamp = 4 [
+        (validate.rules).timestamp.required = true
+      ]
+    ;
+  }
+  
+  message GetChatHistoryRequest {
+    string conversationId = 1 [(validate.rules).string = {min_len: 1}];
+  }
+  
+  message GetChatHistoryResponse {
+    repeated ChatMessage messages = 1;
+  }

@@ -1,39 +1,40 @@
 package main
 
 import (
-	"fmt"
-	"net/http"
 	"os"
+	"sync"
 
-	"github.com/sirupsen/logrus"
+	"github.com/greenblat17/yet-another-messenger/user/internal/api/http"
+	"github.com/greenblat17/yet-another-messenger/user/internal/grpc"
 )
 
 func main() {
-	logrus.Info("Starting server...")
+	probeHandler := http.NewProbeHandler()
 
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintln(w, "Hello from User Service")
-	})
+	server := grpc.NewGRPCServer(probeHandler)
 
-	http.HandleFunc("/live", func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusOK)
-		fmt.Fprintln(w, "User Service is alive")
-	})
-
-	http.HandleFunc("/ready", func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusOK)
-		fmt.Fprintln(w, "User Service is ready")
-	})
-
-	http.HandleFunc("/start-up", func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusOK)
-		fmt.Fprintln(w, "User Service is start up")
-	})
-
-	port, ok := os.LookupEnv("USER_PORT")
+	httpPort, ok := os.LookupEnv("CHAT_HTTP_PORT")
 	if !ok {
-		port = "8081"
+		httpPort = "8081"
 	}
 
-	http.ListenAndServe(fmt.Sprintf(":%s", port), nil)
+	grpcPort, ok := os.LookupEnv("CHAT_GRPC_PORT")
+	if !ok {
+		grpcPort = "50051"
+	}
+
+	wg := sync.WaitGroup{}
+	wg.Add(2)
+
+	go func() {
+		defer wg.Done()
+		server.RunGRPCServer(grpcPort)
+	}()
+
+	go func() {
+		defer wg.Done()
+		server.RunProxyServer(httpPort)
+	}()
+
+	wg.Wait()
 }

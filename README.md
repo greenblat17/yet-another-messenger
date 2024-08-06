@@ -3,12 +3,12 @@
 ## Домашние задания
 
 - [Спроектировать приложение мессенджер](docs/HW1.md)
+- [Выбрать подход API](docs/HW3.md)
 
 ## Стек
 
 - Golang
 - PostgreSQL
-- pgx, squirrel, goose
 - Redis
 - MongoDB
 - Apache Kafka
