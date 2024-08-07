@@ -14,7 +14,10 @@ message RegisterUserRequest {
     json_schema: {
       title: "RegisterUserRequest"
       description: "RegisterUserRequest - запрос на регистрацию пользователя"
-      required: ["email", "password"]
+      required: [
+        "email",
+        "password"
+      ]
       example: "{\"email\": \"example@gmail.com\", \"password\": \"123456\"}"
     }
   };
@@ -53,7 +56,10 @@ message LoginUserRequest {
     json_schema: {
       title: "LoginUserRequest"
       description: "LoginUserRequest - запрос на вход"
-      required: ["email", "password"]
+      required: [
+        "email",
+        "password"
+      ]
       example: "{\"email\": \"example@gmail.com\", \"password\": \"123456\"}"
     }
   };
@@ -70,7 +76,6 @@ message LoginUserRequest {
     (buf.validate.field).string.max_len = 30
   ];
 }
-
 
 // LoginUserResponse - ответ на запрос на вход
 message LoginUserResponse {
@@ -120,7 +125,5 @@ message LogoutResponse {
   };
 
   // success - статус успешности выхода
-  bool success = 1 [
-    json_name = "success"
-  ];
+  bool success = 1 [json_name = "success"];
 }

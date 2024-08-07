@@ -3,7 +3,7 @@ module github.com/greenblat17/yet-another-messenger/auth
 go 1.22.3
 
 require (
-	github.com/envoyproxy/protoc-gen-validate v1.0.4
+	buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.34.2-20240717164558-a6c49f84cc0f.2
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.21.0
 	google.golang.org/genproto/googleapis/api v0.0.0-20240723171418-e6d459c13d2a
 	google.golang.org/grpc v1.65.0

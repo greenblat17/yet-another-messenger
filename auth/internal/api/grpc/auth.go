@@ -3,7 +3,7 @@ package grpc
 import (
 	"context"
 
-	auth "github.com/greenblat17/yet-another-messenger/auth/pkg/auth/api/proto"
+	"github.com/greenblat17/yet-another-messenger/auth/pkg/api/proto/auth"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
